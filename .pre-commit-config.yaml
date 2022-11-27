@@ -1,0 +1,41 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: "trailing-whitespace"
+      - id: "check-case-conflict"
+      - id: "check-merge-conflict"
+      - id: "end-of-file-fixer"
+      - id: "check-toml"
+
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+      - name: black
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+      - name: flake8
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+      - name: isort
+      - files: src/*files
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.991
+    hooks:
+      - id: mypy
+      - name: mypy
+      - files: src/*files
+
+  - repo: https://github.com/python-poetry/poetry
+    rev: 1.2.2
+    hooks:
+      - id: poetry-lock
+      - name: poetry-lock
