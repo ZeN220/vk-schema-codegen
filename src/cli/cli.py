@@ -39,3 +39,7 @@ def main():
 		format="[%(levelname)s] %(asctime)s - %(name)s - %(message)s",
 	)
 	cli()
+
+
+if __name__ == '__main__':
+	main()
