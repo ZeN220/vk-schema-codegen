@@ -1,9 +1,10 @@
 from pathlib import Path
+import logging
 
 import click
 
 
-@click.command()
+@click.group()
 @click.option(
 	"-e",
 	"--errors",
@@ -23,5 +24,18 @@ import click
 	help="Directory to save the output files",
 	type=click.Path(exists=True, file_okay=False, path_type=Path),
 )
+@click.option(
+	"-i",
+	"--input-dir",
+	help="Directory with the schemas of API methods",
+)
 def cli():
 	pass
+
+
+def main():
+	logging.basicConfig(
+		level=logging.INFO,
+		format="[%(levelname)s] %(asctime)s - %(name)s - %(message)s",
+	)
+	cli()
