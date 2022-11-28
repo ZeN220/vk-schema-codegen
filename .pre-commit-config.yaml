@@ -40,3 +40,20 @@ repos:
       - id: poetry-lock
         name: poetry-lock
         files: pyproject.toml
+      - id: poetry-export
+        name: poetry-export requirements
+        files: pyproject.toml
+        args: [
+          "--without-hashes",
+          "-f", "requirements.txt",
+          "-o", "requirements/requirements-dev.txt"
+        ]
+      - id: poetry-export
+        name: poetry-export requirements-dev
+        files: pyproject.toml
+        args: [
+          "--dev",
+          "--without-hashes",
+          "-f", "requirements.txt",
+          "-o", "requirements/requirements-dev.txt"
+        ]
