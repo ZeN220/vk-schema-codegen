@@ -8,3 +8,12 @@ __pycache__/
 
 # VSCode
 .vscode/
+
+# Mypy cache
+.mypy_cache/
+
+# Files of schema VK API
+errors.json
+responses.json
+objects.json
+methods.json
