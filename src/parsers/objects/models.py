@@ -31,7 +31,8 @@ class EnumStringSchema(EnumSchema):
     """In schema of API this name is in CamelCase"""
 
     def __str__(self):
-        class_string = f"class {self.name}(enum.Enum):\n"
+        name = to_camel_case(self.name)
+        class_string = f"class {name}(enum.Enum):\n"
         if self.enumNames is not None:
             for enum, enum_name in zip(self.enum, self.enumNames):
                 enum_name = enum_name.upper().replace(" ", "_")
@@ -52,7 +53,8 @@ class EnumIntegerSchema(EnumSchema):
     minimum: Optional[int] = None
 
     def __str__(self):
-        class_string = f"class {self.name}(enum.IntEnum):\n"
+        name = to_camel_case(self.name)
+        class_string = f"class {name}(enum.IntEnum):\n"
         for enum, enum_name in zip(self.enum, self.enumNames):
             enum_name = enum_name.upper().replace(" ", "_")
             class_string += f"\t{enum_name} = {enum}\n"
