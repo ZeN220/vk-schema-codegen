@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Optional, Literal, Union
 import re
+from typing import Literal, Optional, Union
 
 from msgspec import Struct
 
@@ -29,24 +29,32 @@ class BaseObjectProperty(Struct):
 
 class ReferenceObjectProperty(BaseObjectProperty):
     REFERENCE_REGEX = re.compile(r"\.\./[a-z]+/objects\.json#/definitions/([a-z_]+)")
-    
+
     type: str = "reference"
     """
-    This field is missing from original schema for this property, 
+    This field is missing from original schema for this property,
     but it is required for parsing.
     """
     reference: str
     description: Optional[str] = None
-    
+
     def get_reference(self) -> str:
-        return self.REFERENCE_REGEX.match(self.reference).group(1)
+        result = self.REFERENCE_REGEX.match(self.reference)
+        if result is None:
+            raise ValueError(f"Invalid reference: {self.reference}")
+        return result.group(1)
 
     def __str__(self):
         reference = self.get_reference()
         annotation = to_camel_case(reference)
         if self.required:
-            return f"\t{self.name}: {annotation}\n"
-        return f"\t{self.name}: typing.Optional[{annotation}] = None\n"
+            string = f"\t{self.name}: {annotation}\n"
+        else:
+            string = f"\t{self.name}: typing.Optional[{annotation}] = None\n"
+
+        if self.description is not None:
+            string += f'\t"""{self.description}"""\n'
+        return string
 
 
 class StringObjectProperty(BaseObjectProperty):
@@ -55,8 +63,13 @@ class StringObjectProperty(BaseObjectProperty):
 
     def __str__(self):
         if self.required:
-            return f"\t{self.name}: str\n"
-        return f"\t{self.name}: typing.Optional[str] = None\n"
+            string = f"\t{self.name}: str\n"
+        else:
+            string = f"\t{self.name}: typing.Optional[str] = None\n"
+
+        if self.description is not None:
+            string += f'\t"""{self.description}"""\n'
+        return string
 
 
 class IntegerObjectProperty(BaseObjectProperty):
@@ -69,10 +82,15 @@ class IntegerObjectProperty(BaseObjectProperty):
 
     def __str__(self):
         if self.default is not None:
-            return f"\t{self.name}: int = {self.default}\n"
-        if self.required:
-            return f"\t{self.name}: int\n"
-        return f"\t{self.name}: typing.Optional[int] = None\n"
+            string = f"\t{self.name}: int = {self.default}\n"
+        elif self.required:
+            string = f"\t{self.name}: int\n"
+        else:
+            string = f"\t{self.name}: typing.Optional[int] = None\n"
+
+        if self.description is not None:
+            string += f'\t"""{self.description}"""\n'
+        return string
 
 
 class FloatObjectProperty(BaseObjectProperty):
@@ -82,8 +100,13 @@ class FloatObjectProperty(BaseObjectProperty):
 
     def __str__(self):
         if self.required:
-            return f"\t{self.name}: float\n"
-        return f"\t{self.name}: typing.Optional[float] = None\n"
+            string = f"\t{self.name}: float\n"
+        else:
+            string = f"\t{self.name}: typing.Optional[float] = None\n"
+
+        if self.description is not None:
+            string += f'\t"""{self.description}"""\n'
+        return string
 
 
 class BooleanObjectProperty(BaseObjectProperty):
@@ -92,10 +115,15 @@ class BooleanObjectProperty(BaseObjectProperty):
 
     def __str__(self):
         if self.default is not None:
-            return f"\t{self.name}: bool = {self.default}\n"
-        if self.required:
-            return f"\t{self.name}: bool\n"
-        return f"\t{self.name}: typing.Optional[bool] = None\n"
+            string = f"\t{self.name}: bool = {self.default}\n"
+        elif self.required:
+            string = f"\t{self.name}: bool\n"
+        else:
+            string = f"\t{self.name}: typing.Optional[bool] = None\n"
+
+        if self.description is not None:
+            string += f'\t"""{self.description}"""\n'
+        return string
 
 
 class DictObjectProperty(BaseObjectProperty):
@@ -112,9 +140,14 @@ class ArrayObjectProperty(BaseObjectProperty):
     def __str__(self):
         annotation = self.get_annotation()
         if self.required:
-            return f"\t{self.name}: list[{annotation}]\n"
-        return f"\t{self.name}: typing.Optional[list[{annotation}]] = None\n"
-    
+            string = f"\t{self.name}: list[{annotation}]\n"
+        else:
+            string = f"\t{self.name}: typing.Optional[list[{annotation}]] = None\n"
+
+        if self.description is not None:
+            string += f'\t"""{self.description}"""\n'
+        return string
+
     def get_annotation(self) -> str:
         if isinstance(self.items, ReferenceObjectProperty):
             reference = self.items.get_reference()
