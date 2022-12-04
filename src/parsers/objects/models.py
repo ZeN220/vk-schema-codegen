@@ -8,7 +8,7 @@ from msgspec import Struct
 
 class ObjectSchema(Struct):
     name: str
-    properties: list["BaseObjectProperty"]
+    properties: list[BaseObjectProperty]
 
     def __str__(self):
         name = to_camel_case(self.name)
