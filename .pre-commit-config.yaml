@@ -52,7 +52,6 @@ repos:
         name: poetry-export requirements-dev
         files: pyproject.toml
         args: [
-          "--dev",
           "--without-hashes",
           "-f", "requirements.txt",
           "-o", "requirements/requirements-dev.txt"
