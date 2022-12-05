@@ -5,6 +5,16 @@ from typing import Literal, Optional, Union
 
 from msgspec import Struct
 
+from src.strings import to_camel_case
+
+from .array_items import (
+    ArrayItem,
+    IntegerArrayItem,
+    NestedArrayItem,
+    ReferenceArrayItem,
+    StringArrayItem,
+)
+
 
 class ObjectSchema(Struct):
     name: str
@@ -16,48 +26,6 @@ class ObjectSchema(Struct):
         for property_ in self.properties:
             class_string += str(property_)
         class_string += "\n"
-        return class_string
-
-
-class EnumSchema(Struct):
-    type: str
-    name: str
-    description: Optional[str] = None
-
-
-class EnumStringSchema(EnumSchema):
-    enum: list[str]
-    enumNames: Optional[list[str]] = None
-    """In schema of API this name is in CamelCase"""
-
-    def __str__(self):
-        name = to_camel_case(self.name)
-        class_string = f"class {name}(enum.Enum):\n"
-        if self.enumNames is not None:
-            for enum, enum_name in zip(self.enum, self.enumNames):
-                enum_name = enum_name.upper().replace(" ", "_")
-                class_string += f'\t{enum_name} = "{enum}"\n'
-        else:
-            for enum in self.enum:
-                enum_name = enum.upper()
-                class_string += f'\t{enum_name} = "{enum_name}"\n'
-        class_string += "\n"
-        return class_string
-
-
-class EnumIntegerSchema(EnumSchema):
-    enum: list[int]
-    enumNames: list[str]
-    """In schema of API this name is in CamelCase"""
-    default: Optional[int] = None
-    minimum: Optional[int] = None
-
-    def __str__(self):
-        name = to_camel_case(self.name)
-        class_string = f"class {name}(enum.IntEnum):\n"
-        for enum, enum_name in zip(self.enum, self.enumNames):
-            enum_name = enum_name.upper().replace(" ", "_")
-            class_string += f"\t{enum_name} = {enum}\n"
         return class_string
 
 
@@ -176,7 +144,7 @@ class DictObjectProperty(BaseObjectProperty):
 
 
 class ArrayObjectProperty(BaseObjectProperty):
-    items: BaseObjectProperty
+    items: ArrayItem
     description: Optional[str] = None
 
     def __str__(self):
@@ -191,20 +159,13 @@ class ArrayObjectProperty(BaseObjectProperty):
         return string
 
     def get_annotation(self) -> str:
-        if isinstance(self.items, ReferenceObjectProperty):
-            reference = self.items.get_reference()
-            return to_camel_case(reference)
-        if isinstance(self.items, StringObjectProperty):
+        if isinstance(self.items, StringArrayItem):
             return "str"
-        if isinstance(self.items, IntegerObjectProperty):
+        if isinstance(self.items, IntegerArrayItem):
             return "int"
-        if isinstance(self.items, FloatObjectProperty):
-            return "float"
-        if isinstance(self.items, BooleanObjectProperty):
-            return "bool"
+        if isinstance(self.items, ReferenceArrayItem):
+            return to_camel_case(self.items.reference)
+        if isinstance(self.items, NestedArrayItem):
+            annotation = self.items.get_annotation()
+            return f"list[{annotation}]"
         raise TypeError("Unsupported property type")
-
-
-def to_camel_case(snake_str: str) -> str:
-    result = snake_str.title().replace("_", "")
-    return result
