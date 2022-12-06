@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Type
 
 from msgspec import Struct
 
@@ -45,3 +45,16 @@ class EnumIntegerSchema(EnumSchema):
             enum_name = enum_name.upper().replace(" ", "_")
             class_string += f"\t{enum_name} = {enum}\n"
         return class_string
+
+
+ENUMS: dict[str, Type[EnumSchema]] = {
+    "string": EnumStringSchema,
+    "integer": EnumIntegerSchema,
+}
+
+
+def get_enum_from_dict(name: str, enum_data: dict) -> EnumSchema:
+    enum_class = ENUMS.get(enum_data["type"])
+    if enum_class is None:
+        raise ValueError(f"Unknown enum type: {enum_data}")
+    return enum_class(name=name, **enum_data)
