@@ -1,24 +1,26 @@
 from __future__ import annotations
 
-import re
-from typing import Literal, Optional, Union
+from typing import Literal, Optional, Type, Union
 
 from msgspec import Struct
 
-from src.strings import to_camel_case
+from src.strings import REFERENCE_REGEX, to_camel_case
 
-from .array_items import (
-    ArrayItem,
-    IntegerArrayItem,
-    NestedArrayItem,
-    ReferenceArrayItem,
-    StringArrayItem,
-)
+from .array_items import ArrayItem, get_array_item_from_dict
 
 
 class ObjectSchema(Struct):
     name: str
     properties: list[BaseObjectProperty]
+
+    @classmethod
+    def from_dict(cls, name, properties: dict[str, dict]) -> ObjectSchema:
+        result = []
+        for property_name, property_value in properties.items():
+            obj = get_property_from_dict(property_value, name=property_name)
+            result.append(obj)
+        schema = cls(name=name, properties=result)
+        return schema
 
     def __str__(self):
         name = to_camel_case(self.name)
@@ -31,15 +33,12 @@ class ObjectSchema(Struct):
 
 class BaseObjectProperty(Struct):
     type: str
-    name: Optional[str] = None
-    """If property is a element of a list, it does not have a name"""
+    name: str
     required: bool = False
     """If required is not defined, it is assumed to be false."""
 
 
 class ReferenceObjectProperty(BaseObjectProperty):
-    REFERENCE_REGEX = re.compile(r"\.\./[a-z]+/objects\.json#/definitions/([a-z_]+)")
-
     type: str = "reference"
     """
     This field is missing from original schema for this property,
@@ -49,7 +48,7 @@ class ReferenceObjectProperty(BaseObjectProperty):
     description: Optional[str] = None
 
     def get_reference(self) -> str:
-        result = self.REFERENCE_REGEX.match(self.reference)
+        result = REFERENCE_REGEX.match(self.reference)
         if result is None:
             raise ValueError(f"Invalid reference: {self.reference}")
         return result.group(1)
@@ -68,7 +67,7 @@ class ReferenceObjectProperty(BaseObjectProperty):
 
 
 class StringObjectProperty(BaseObjectProperty):
-    description: str
+    description: Optional[str] = None
     format: Optional[Literal["uri"]] = None
 
     def __str__(self):
@@ -148,7 +147,7 @@ class ArrayObjectProperty(BaseObjectProperty):
     description: Optional[str] = None
 
     def __str__(self):
-        annotation = self.get_annotation()
+        annotation = self.items.__typehint__
         if self.required:
             string = f"\t{self.name}: list[{annotation}]\n"
         else:
@@ -158,14 +157,33 @@ class ArrayObjectProperty(BaseObjectProperty):
             string += f'\t"""{self.description}"""\n'
         return string
 
-    def get_annotation(self) -> str:
-        if isinstance(self.items, StringArrayItem):
-            return "str"
-        if isinstance(self.items, IntegerArrayItem):
-            return "int"
-        if isinstance(self.items, ReferenceArrayItem):
-            return to_camel_case(self.items.reference)
-        if isinstance(self.items, NestedArrayItem):
-            annotation = self.items.get_annotation()
-            return f"list[{annotation}]"
-        raise TypeError("Unsupported property type")
+
+# Because ReferenceObjectProperty doesn't have "type" field in schema of API,
+# it's not available in this dict
+PROPERTIES: dict[str, Type[BaseObjectProperty]] = {
+    "string": StringObjectProperty,
+    "integer": IntegerObjectProperty,
+    "number": FloatObjectProperty,
+    "boolean": BooleanObjectProperty,
+    "object": DictObjectProperty,
+    "array": ArrayObjectProperty,
+}
+
+
+def get_property_from_dict(item: dict, name: str) -> BaseObjectProperty:
+    if name[0].isdigit():
+        name = f"_{name}"
+
+    if item.get("enum") is not None:
+        # TODO: Added class for property of enum
+        pass
+    if "$ref" in item:
+        reference = item.pop("$ref")
+        return ReferenceObjectProperty(name=name, reference=reference, **item)
+
+    property_class = PROPERTIES.get(item["type"])
+    if property_class is None:
+        raise TypeError(f"Unknown property type: {item['type']}")
+    if item["type"] == "array":
+        item["items"] = get_array_item_from_dict(item["items"])
+    return property_class(name=name, **item)
