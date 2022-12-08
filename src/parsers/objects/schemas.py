@@ -1,13 +1,41 @@
-from typing import Optional, Type
+from __future__ import annotations
+
+from typing import Optional
 
 from msgspec import Struct
 
 from src.strings import to_camel_case
 
+from .properties import BaseObjectProperty, get_property_from_dict
 
-class EnumSchema(Struct):
-    type: str
+
+class BaseSchema(Struct):
     name: str
+
+
+class ObjectSchema(BaseSchema):
+    properties: list[BaseObjectProperty]
+
+    @classmethod
+    def from_dict(cls, name, properties: dict[str, dict]) -> ObjectSchema:
+        result = []
+        for property_name, property_value in properties.items():
+            obj = get_property_from_dict(property_value, name=property_name)
+            result.append(obj)
+        schema = cls(name=name, properties=result)
+        return schema
+
+    def __str__(self):
+        name = to_camel_case(self.name)
+        class_string = f"class {name}(pydantic.BaseModel):\n"
+        for property_ in self.properties:
+            class_string += str(property_)
+        class_string += "\n"
+        return class_string
+
+
+class EnumSchema(BaseSchema):
+    type: str
     description: Optional[str] = None
 
 
@@ -47,14 +75,9 @@ class EnumIntegerSchema(EnumSchema):
         return class_string
 
 
-ENUMS: dict[str, Type[EnumSchema]] = {
-    "string": EnumStringSchema,
-    "integer": EnumIntegerSchema,
-}
-
-
 def get_enum_from_dict(name: str, enum_data: dict) -> EnumSchema:
-    enum_class = ENUMS.get(enum_data["type"])
-    if enum_class is None:
-        raise ValueError(f"Unknown enum type: {enum_data}")
-    return enum_class(name=name, **enum_data)
+    if enum_data["type"] == "string":
+        return EnumStringSchema(name=name, **enum_data)
+    elif enum_data["type"] == "integer":
+        return EnumIntegerSchema(name=name, **enum_data)
+    raise ValueError(f"Unknown enum type: {enum_data}")

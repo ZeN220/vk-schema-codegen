@@ -6,36 +6,31 @@ from msgspec import Struct
 
 from src.strings import REFERENCE_REGEX, to_camel_case
 
-from .array_items import ArrayItem, get_array_item_from_dict
-
-
-class ObjectSchema(Struct):
-    name: str
-    properties: list[BaseObjectProperty]
-
-    @classmethod
-    def from_dict(cls, name, properties: dict[str, dict]) -> ObjectSchema:
-        result = []
-        for property_name, property_value in properties.items():
-            obj = get_property_from_dict(property_value, name=property_name)
-            result.append(obj)
-        schema = cls(name=name, properties=result)
-        return schema
-
-    def __str__(self):
-        name = to_camel_case(self.name)
-        class_string = f"class {name}(pydantic.BaseModel):\n"
-        for property_ in self.properties:
-            class_string += str(property_)
-        class_string += "\n"
-        return class_string
-
 
 class BaseObjectProperty(Struct):
     type: str
-    name: str
+    name: Optional[str] = None
+    """If property is a element of a list, this is the type of the list"""
     required: bool = False
     """If required is not defined, it is assumed to be false."""
+    description: Optional[str] = None
+
+    @property
+    def __typehint__(self) -> str:
+        raise NotImplementedError
+
+    def __str__(self):
+        if self.name is None:
+            raise TypeError("Element of list cannot have a string representation")
+        typehint = self.__typehint__
+        if self.required:
+            string = f"\t{self.name}: {typehint}\n"
+        else:
+            string = f"\t{self.name}: Optional[{typehint}] = None\n"
+
+        if self.description is not None:
+            string += f'\t"""{self.description}"""\n'
+        return string
 
 
 class ReferenceObjectProperty(BaseObjectProperty):
@@ -53,35 +48,22 @@ class ReferenceObjectProperty(BaseObjectProperty):
             raise ValueError(f"Invalid reference: {self.reference}")
         return result.group(1)
 
-    def __str__(self):
+    @property
+    def __typehint__(self) -> str:
         reference = self.get_reference()
-        annotation = to_camel_case(reference)
-        if self.required:
-            string = f"\t{self.name}: {annotation}\n"
-        else:
-            string = f"\t{self.name}: typing.Optional[{annotation}] = None\n"
-
-        if self.description is not None:
-            string += f'\t"""{self.description}"""\n'
-        return string
+        return to_camel_case(reference)
 
 
 class StringObjectProperty(BaseObjectProperty):
+    __typehint__ = "str"
+
     description: Optional[str] = None
     format: Optional[Literal["uri"]] = None
 
-    def __str__(self):
-        if self.required:
-            string = f"\t{self.name}: str\n"
-        else:
-            string = f"\t{self.name}: typing.Optional[str] = None\n"
-
-        if self.description is not None:
-            string += f'\t"""{self.description}"""\n'
-        return string
-
 
 class IntegerObjectProperty(BaseObjectProperty):
+    __typehint__ = "int"
+
     description: Optional[str] = None
     default: Optional[int] = None
     minimum: Optional[int] = None
@@ -103,22 +85,16 @@ class IntegerObjectProperty(BaseObjectProperty):
 
 
 class FloatObjectProperty(BaseObjectProperty):
+    __typehint__ = "float"
+
     description: Optional[str] = None
     minimum: Optional[Union[int, float]] = None
     maximum: Optional[int] = None
 
-    def __str__(self):
-        if self.required:
-            string = f"\t{self.name}: float\n"
-        else:
-            string = f"\t{self.name}: typing.Optional[float] = None\n"
-
-        if self.description is not None:
-            string += f'\t"""{self.description}"""\n'
-        return string
-
 
 class BooleanObjectProperty(BaseObjectProperty):
+    __typehint__ = "bool"
+
     description: Optional[str] = None
     default: Optional[bool] = None
 
@@ -136,26 +112,16 @@ class BooleanObjectProperty(BaseObjectProperty):
 
 
 class DictObjectProperty(BaseObjectProperty):
-    def __str__(self):
-        if self.required:
-            return f"\t{self.name}: dict\n"
-        return f"\t{self.name}: typing.Optional[dict] = None\n"
+    __typehint__ = "dict"
 
 
 class ArrayObjectProperty(BaseObjectProperty):
-    items: ArrayItem
+    items: BaseObjectProperty
     description: Optional[str] = None
 
-    def __str__(self):
-        annotation = self.items.__typehint__
-        if self.required:
-            string = f"\t{self.name}: list[{annotation}]\n"
-        else:
-            string = f"\t{self.name}: typing.Optional[list[{annotation}]] = None\n"
-
-        if self.description is not None:
-            string += f'\t"""{self.description}"""\n'
-        return string
+    @property
+    def __typehint__(self) -> str:
+        return f"list[{self.items.__typehint__}]"
 
 
 # Because ReferenceObjectProperty doesn't have "type" field in schema of API,
@@ -170,14 +136,16 @@ PROPERTIES: dict[str, Type[BaseObjectProperty]] = {
 }
 
 
-def get_property_from_dict(item: dict, name: str) -> BaseObjectProperty:
-    if name[0].isdigit():
+def get_property_from_dict(
+    item: dict, name: Optional[str] = None
+) -> BaseObjectProperty:
+    if name is not None and name[0].isdigit():
         name = f"_{name}"
 
     if item.get("enum") is not None:
         # TODO: Added class for property of enum
         pass
-    if "$ref" in item:
+    if item.get("$ref") is not None:
         reference = item.pop("$ref")
         return ReferenceObjectProperty(name=name, reference=reference, **item)
 
@@ -185,5 +153,5 @@ def get_property_from_dict(item: dict, name: str) -> BaseObjectProperty:
     if property_class is None:
         raise TypeError(f"Unknown property type: {item['type']}")
     if item["type"] == "array":
-        item["items"] = get_array_item_from_dict(item["items"])
+        item["items"] = get_property_from_dict(item["items"])
     return property_class(name=name, **item)
