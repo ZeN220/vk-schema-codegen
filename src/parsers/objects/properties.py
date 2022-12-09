@@ -25,12 +25,12 @@ class BaseObjectProperty(Struct):
             raise TypeError("Element of list cannot have a string representation")
         typehint = self.__typehint__
         if self.required:
-            string = f"\t{self.name}: {typehint}\n"
+            string = f"    {self.name}: {typehint}\n"
         else:
-            string = f"\t{self.name}: typing.Optional[{typehint}] = None\n"
+            string = f"    {self.name}: typing.Optional[{typehint}] = None\n"
 
         if self.description is not None:
-            string += f'\t"""{self.description}"""\n'
+            string += f'    """{self.description}"""\n'
         return string
 
 
@@ -78,14 +78,14 @@ class IntegerObjectProperty(BaseObjectProperty):
 
     def __str__(self):
         if self.default is not None:
-            string = f"\t{self.name}: int = {self.default}\n"
+            string = f"    {self.name}: int = {self.default}\n"
         elif self.required:
-            string = f"\t{self.name}: int\n"
+            string = f"    {self.name}: int\n"
         else:
-            string = f"\t{self.name}: typing.Optional[int] = None\n"
+            string = f"    {self.name}: typing.Optional[int] = None\n"
 
         if self.description is not None:
-            string += f'\t"""{self.description}"""\n'
+            string += f'    """{self.description}"""\n'
         return string
 
 
@@ -109,14 +109,14 @@ class BooleanObjectProperty(BaseObjectProperty):
 
     def __str__(self):
         if self.default is not None:
-            string = f"\t{self.name}: bool = {self.default}\n"
+            string = f"    {self.name}: bool = {self.default}\n"
         elif self.required:
-            string = f"\t{self.name}: bool\n"
+            string = f"    {self.name}: bool\n"
         else:
-            string = f"\t{self.name}: typing.Optional[bool] = None\n"
+            string = f"    {self.name}: typing.Optional[bool] = None\n"
 
         if self.description is not None:
-            string += f'\t"""{self.description}"""\n'
+            string += f'    """{self.description}"""\n'
         return string
 
 
