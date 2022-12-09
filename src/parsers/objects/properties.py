@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-from typing import Literal, Optional, Type, Union
+from typing import Literal, Optional, Union
 
 from msgspec import Struct
 
 from src.strings import REFERENCE_REGEX, to_camel_case
 
+from .array import BaseArrayItem, get_item_from_dict
+
 
 class BaseObjectProperty(Struct):
     type: str
-    name: Optional[str] = None
-    """If property is a element of a list, this is the type of the list"""
+    name: str
     required: bool = False
     """If required is not defined, it is assumed to be false."""
     description: Optional[str] = None
@@ -26,7 +27,7 @@ class BaseObjectProperty(Struct):
         if self.required:
             string = f"\t{self.name}: {typehint}\n"
         else:
-            string = f"\t{self.name}: Optional[{typehint}] = None\n"
+            string = f"\t{self.name}: typing.Optional[{typehint}] = None\n"
 
         if self.description is not None:
             string += f'\t"""{self.description}"""\n'
@@ -55,21 +56,25 @@ class ReferenceObjectProperty(BaseObjectProperty):
 
 
 class StringObjectProperty(BaseObjectProperty):
-    __typehint__ = "str"
-
     description: Optional[str] = None
     format: Optional[Literal["uri"]] = None
 
+    @property
+    def __typehint__(self) -> str:
+        return "str"
+
 
 class IntegerObjectProperty(BaseObjectProperty):
-    __typehint__ = "int"
-
     description: Optional[str] = None
     default: Optional[int] = None
     minimum: Optional[int] = None
     maximum: Optional[int] = None
     entity: Optional[Literal["owner"]] = None
     format: Optional[Literal["int64"]] = None
+
+    @property
+    def __typehint__(self) -> str:
+        return "int"
 
     def __str__(self):
         if self.default is not None:
@@ -85,18 +90,22 @@ class IntegerObjectProperty(BaseObjectProperty):
 
 
 class FloatObjectProperty(BaseObjectProperty):
-    __typehint__ = "float"
-
     description: Optional[str] = None
     minimum: Optional[Union[int, float]] = None
     maximum: Optional[int] = None
 
+    @property
+    def __typehint__(self) -> str:
+        return "float"
+
 
 class BooleanObjectProperty(BaseObjectProperty):
-    __typehint__ = "bool"
-
     description: Optional[str] = None
     default: Optional[bool] = None
+
+    @property
+    def __typehint__(self) -> str:
+        return "bool"
 
     def __str__(self):
         if self.default is not None:
@@ -112,46 +121,67 @@ class BooleanObjectProperty(BaseObjectProperty):
 
 
 class DictObjectProperty(BaseObjectProperty):
-    __typehint__ = "dict"
+    @property
+    def __typehint__(self) -> str:
+        return "dict"
 
 
 class ArrayObjectProperty(BaseObjectProperty):
-    items: BaseObjectProperty
-    description: Optional[str] = None
+    items: BaseArrayItem
 
     @property
     def __typehint__(self) -> str:
         return f"list[{self.items.__typehint__}]"
 
 
-# Because ReferenceObjectProperty doesn't have "type" field in schema of API,
-# it's not available in this dict
-PROPERTIES: dict[str, Type[BaseObjectProperty]] = {
-    "string": StringObjectProperty,
-    "integer": IntegerObjectProperty,
-    "number": FloatObjectProperty,
-    "boolean": BooleanObjectProperty,
-    "object": DictObjectProperty,
-    "array": ArrayObjectProperty,
-}
+class StringEnumProperty(StringObjectProperty):
+    enum: list[str]
+    enumNames: Optional[list[str]] = None
+
+    @property
+    def __typehint__(self) -> str:
+        return to_camel_case(self.name)
 
 
-def get_property_from_dict(
-    item: dict, name: Optional[str] = None
-) -> BaseObjectProperty:
-    if name is not None and name[0].isdigit():
+class IntegerEnumProperty(IntegerObjectProperty):
+    enum: list[int]
+    enumNames: list[str]
+
+    @property
+    def __typehint__(self) -> str:
+        return to_camel_case(self.name)
+
+
+def get_property_from_dict(item: dict, name: str) -> BaseObjectProperty:
+    if name[0].isdigit():
         name = f"_{name}"
 
     if item.get("enum") is not None:
-        # TODO: Added class for property of enum
-        pass
+        return _get_enum_property(item, name)
     if item.get("$ref") is not None:
         reference = item.pop("$ref")
         return ReferenceObjectProperty(name=name, reference=reference, **item)
 
-    property_class = PROPERTIES.get(item["type"])
-    if property_class is None:
-        raise TypeError(f"Unknown property type: {item['type']}")
-    if item["type"] == "array":
-        item["items"] = get_property_from_dict(item["items"])
-    return property_class(name=name, **item)
+    property_type = item.get("type")
+    if property_type == "array":
+        item["items"] = get_item_from_dict(item["items"])
+        return ArrayObjectProperty(name=name, **item)
+    if property_type == "object":
+        return DictObjectProperty(name=name, **item)
+    if property_type == "string":
+        return StringObjectProperty(name=name, **item)
+    if property_type == "integer":
+        return IntegerObjectProperty(name=name, **item)
+    if property_type == "number":
+        return FloatObjectProperty(name=name, **item)
+    if property_type == "boolean":
+        return BooleanObjectProperty(name=name, **item)
+    raise ValueError(f"Unknown property type: {property_type}")
+
+
+def _get_enum_property(item: dict, name: str) -> BaseObjectProperty:
+    property_type = item["type"]
+    if property_type == "string":
+        return StringEnumProperty(name=name, **item)
+    else:
+        return IntegerEnumProperty(name=name, **item)
