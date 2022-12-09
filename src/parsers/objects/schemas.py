@@ -6,6 +6,7 @@ from msgspec import Struct
 
 from src.strings import to_camel_case
 
+from .array import BaseArrayItem, get_item_from_dict
 from .properties import BaseObjectProperty, get_property_from_dict
 
 
@@ -32,6 +33,20 @@ class ObjectSchema(BaseSchema):
             class_string += str(property_)
         class_string += "\n"
         return class_string
+
+
+class ArraySchema(BaseSchema):
+    items: BaseArrayItem
+
+    @classmethod
+    def from_dict(cls, name, items: dict) -> ArraySchema:
+        item = get_item_from_dict(items)
+        schema = cls(name=name, items=item)
+        return schema
+
+    def __str__(self):
+        name = to_camel_case(self.name)
+        return f"{name} = list[{self.items.__typehint__}]"
 
 
 class EnumSchema(BaseSchema):
@@ -81,3 +96,12 @@ def get_enum_from_dict(name: str, enum_data: dict) -> EnumSchema:
     elif enum_data["type"] == "integer":
         return EnumIntegerSchema(name=name, **enum_data)
     raise ValueError(f"Unknown enum type: {enum_data}")
+
+
+def get_enums_from_properties(properties: dict[str, dict]) -> list[EnumSchema]:
+    result = []
+    for property_name, data in properties.items():
+        if data.get("enum") is not None:
+            enum = get_enum_from_dict(property_name, data)
+            result.append(enum)
+    return result
