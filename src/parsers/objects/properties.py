@@ -21,8 +21,6 @@ class BaseObjectProperty(Struct):
         raise NotImplementedError
 
     def __str__(self):
-        if self.name is None:
-            raise TypeError("Element of list cannot have a string representation")
         typehint = self.__typehint__
         if self.required:
             string = f"    {self.name}: {typehint}\n"
