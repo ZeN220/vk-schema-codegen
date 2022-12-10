@@ -41,7 +41,6 @@ class ReferenceObjectProperty(BaseObjectProperty):
     but it is required for parsing.
     """
     reference: str
-    description: Optional[str] = None
 
     def get_reference(self) -> str:
         result = REFERENCE_REGEX.match(self.reference)
@@ -56,7 +55,6 @@ class ReferenceObjectProperty(BaseObjectProperty):
 
 
 class StringObjectProperty(BaseObjectProperty):
-    description: Optional[str] = None
     format: Optional[Literal["uri"]] = None
 
     @property
@@ -65,7 +63,6 @@ class StringObjectProperty(BaseObjectProperty):
 
 
 class IntegerObjectProperty(BaseObjectProperty):
-    description: Optional[str] = None
     default: Optional[int] = None
     minimum: Optional[int] = None
     maximum: Optional[int] = None
@@ -90,7 +87,6 @@ class IntegerObjectProperty(BaseObjectProperty):
 
 
 class FloatObjectProperty(BaseObjectProperty):
-    description: Optional[str] = None
     minimum: Optional[Union[int, float]] = None
     maximum: Optional[int] = None
 
@@ -100,7 +96,6 @@ class FloatObjectProperty(BaseObjectProperty):
 
 
 class BooleanObjectProperty(BaseObjectProperty):
-    description: Optional[str] = None
     default: Optional[bool] = None
 
     @property
