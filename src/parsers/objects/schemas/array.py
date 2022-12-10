@@ -17,4 +17,4 @@ class ArraySchema(BaseSchema):
 
     def __str__(self):
         name = to_camel_case(self.name)
-        return f"{name} = list[{self.items.__typehint__}]"
+        return f"{name} = list[{self.items.__typehint__}]\n\n"
