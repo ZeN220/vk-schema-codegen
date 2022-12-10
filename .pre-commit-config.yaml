@@ -46,13 +46,14 @@ repos:
         args: [
           "--without-hashes",
           "-f", "requirements.txt",
-          "-o", "requirements/requirements-dev.txt"
+          "-o", "requirements/requirements.txt"
         ]
       - id: poetry-export
         name: poetry-export requirements-dev
         files: pyproject.toml
         args: [
           "--without-hashes",
+          "--with", "dev",
           "-f", "requirements.txt",
           "-o", "requirements/requirements-dev.txt"
         ]
