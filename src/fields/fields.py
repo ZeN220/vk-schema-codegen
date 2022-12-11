@@ -150,7 +150,7 @@ class UnionField(BaseField):
             elif type_field == "integer":
                 types.append("int")
             else:
-                raise TypeError(f"Unknown union type: {type_field}")
+                raise ValueError(f"Unknown union type: {type_field}")
         return types
 
 
