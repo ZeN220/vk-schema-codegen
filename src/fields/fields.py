@@ -9,7 +9,7 @@ from src.strings import REFERENCE_REGEX, to_camel_case
 from .array import BaseArrayItem, get_item_from_dict
 
 
-class BaseObjectProperty(Struct):
+class BaseField(Struct):
     type: str
     name: str
     required: bool = False
@@ -32,7 +32,7 @@ class BaseObjectProperty(Struct):
         return string
 
 
-class ReferenceObjectProperty(BaseObjectProperty):
+class ReferenceField(BaseField):
     type: str = "reference"
     """
     This field is missing from original schema for this property,
@@ -52,7 +52,7 @@ class ReferenceObjectProperty(BaseObjectProperty):
         return to_camel_case(reference)
 
 
-class StringObjectProperty(BaseObjectProperty):
+class StringField(BaseField):
     format: Optional[Literal["uri"]] = None
 
     @property
@@ -60,7 +60,7 @@ class StringObjectProperty(BaseObjectProperty):
         return "str"
 
 
-class IntegerObjectProperty(BaseObjectProperty):
+class IntegerField(BaseField):
     default: Optional[int] = None
     minimum: Optional[int] = None
     maximum: Optional[int] = None
@@ -84,7 +84,7 @@ class IntegerObjectProperty(BaseObjectProperty):
         return string
 
 
-class FloatObjectProperty(BaseObjectProperty):
+class FloatField(BaseField):
     minimum: Optional[Union[int, float]] = None
     maximum: Optional[int] = None
 
@@ -93,7 +93,7 @@ class FloatObjectProperty(BaseObjectProperty):
         return "float"
 
 
-class BooleanObjectProperty(BaseObjectProperty):
+class BooleanField(BaseField):
     default: Optional[bool] = None
 
     @property
@@ -113,13 +113,13 @@ class BooleanObjectProperty(BaseObjectProperty):
         return string
 
 
-class DictObjectProperty(BaseObjectProperty):
+class DictField(BaseField):
     @property
     def __typehint__(self) -> str:
         return "dict"
 
 
-class ArrayObjectProperty(BaseObjectProperty):
+class ArrayField(BaseField):
     items: BaseArrayItem
 
     @property
@@ -127,7 +127,7 @@ class ArrayObjectProperty(BaseObjectProperty):
         return f"list[{self.items.__typehint__}]"
 
 
-class StringEnumProperty(StringObjectProperty):
+class StringEnumProperty(StringField):
     enum: list[str]
     enumNames: Optional[list[str]] = None
 
@@ -136,7 +136,7 @@ class StringEnumProperty(StringObjectProperty):
         return to_camel_case(self.name)
 
 
-class IntegerEnumProperty(IntegerObjectProperty):
+class IntegerEnumProperty(IntegerField):
     enum: list[int]
     enumNames: list[str]
 
@@ -145,7 +145,7 @@ class IntegerEnumProperty(IntegerObjectProperty):
         return to_camel_case(self.name)
 
 
-def get_property_from_dict(item: dict, name: str) -> BaseObjectProperty:
+def get_property_from_dict(item: dict, name: str) -> BaseField:
     if name[0].isdigit():
         name = f"_{name}"
 
@@ -153,26 +153,26 @@ def get_property_from_dict(item: dict, name: str) -> BaseObjectProperty:
         return _get_enum_property(item, name)
     if item.get("$ref") is not None:
         reference = item.pop("$ref")
-        return ReferenceObjectProperty(name=name, reference=reference, **item)
+        return ReferenceField(name=name, reference=reference, **item)
 
     property_type = item.get("type")
     if property_type == "array":
         item["items"] = get_item_from_dict(item["items"])
-        return ArrayObjectProperty(name=name, **item)
+        return ArrayField(name=name, **item)
     if property_type == "object":
-        return DictObjectProperty(name=name, **item)
+        return DictField(name=name, **item)
     if property_type == "string":
-        return StringObjectProperty(name=name, **item)
+        return StringField(name=name, **item)
     if property_type == "integer":
-        return IntegerObjectProperty(name=name, **item)
+        return IntegerField(name=name, **item)
     if property_type == "number":
-        return FloatObjectProperty(name=name, **item)
+        return FloatField(name=name, **item)
     if property_type == "boolean":
-        return BooleanObjectProperty(name=name, **item)
+        return BooleanField(name=name, **item)
     raise ValueError(f"Unknown property type: {property_type}")
 
 
-def _get_enum_property(item: dict, name: str) -> BaseObjectProperty:
+def _get_enum_property(item: dict, name: str) -> BaseField:
     property_type = item["type"]
     if property_type == "string":
         return StringEnumProperty(name=name, **item)

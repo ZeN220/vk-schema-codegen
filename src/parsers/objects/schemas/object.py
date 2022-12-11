@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from src.parsers.objects.properties import BaseObjectProperty, get_property_from_dict
+from src.fields import BaseField, get_property_from_dict
 from src.strings import to_camel_case
 
 from .base import BaseSchema
 
 
 class ObjectSchema(BaseSchema):
-    properties: list[BaseObjectProperty]
+    properties: list[BaseField]
 
     @classmethod
     def from_dict(cls, name, properties: dict[str, dict]) -> ObjectSchema:

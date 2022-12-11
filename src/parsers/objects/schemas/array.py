@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.parsers.objects.array import BaseArrayItem, get_item_from_dict
+from src.fields import BaseArrayItem, get_item_from_dict
 from src.strings import to_camel_case
 
 from .base import BaseSchema
