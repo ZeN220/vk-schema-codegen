@@ -17,7 +17,12 @@ class EnumStringSchema(EnumSchema):
 
     def __str__(self):
         name = to_camel_case(self.name)
-        class_string = f"class {name}(enum.Enum):\n"
+        # fmt: off
+        class_string = (
+            f'class {name}(enum.Enum):\n'
+            f'    """{self.description}"""\n'
+        )
+        # fmt: on
         if self.enumNames is not None:
             for enum, enum_name in zip(self.enum, self.enumNames):
                 enum_name = enum_name.upper().replace(" ", "_")
@@ -39,7 +44,12 @@ class EnumIntegerSchema(EnumSchema):
 
     def __str__(self):
         name = to_camel_case(self.name)
-        class_string = f"class {name}(enum.IntEnum):\n"
+        # fmt: off
+        class_string = (
+            f'class {name}(enum.IntEnum):\n'
+            f'    """{self.description}"""\n'
+        )
+        # fmt: on
         for enum, enum_name in zip(self.enum, self.enumNames):
             enum_name = enum_name.upper().replace(" ", "_")
             class_string += f"\t{enum_name} = {enum}\n"
