@@ -57,8 +57,12 @@ def get_enum_from_dict(name: str, enum_data: dict) -> EnumSchema:
 
 def get_enums_from_properties(properties: dict[str, dict]) -> list[EnumSchema]:
     result = []
+    properties = properties.copy()
     for property_name, data in properties.items():
-        if data.get("enum") is not None:
-            enum = get_enum_from_dict(property_name, data)
-            result.append(enum)
+        if data.get("enum") is None:
+            continue
+        # Property of enum can be required, but for generating enums class it is not needed
+        data.pop("required", None)
+        enum = get_enum_from_dict(property_name, data)
+        result.append(enum)
     return result
