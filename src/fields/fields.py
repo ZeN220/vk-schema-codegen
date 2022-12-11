@@ -10,7 +10,7 @@ from .array import BaseArrayItem, get_item_from_dict
 
 
 class BaseField(Struct):
-    type: str
+    type: Union[str, list]
     name: str
     required: bool = False
     """If required is not defined, it is assumed to be false."""
@@ -53,6 +53,7 @@ class ReferenceField(BaseField):
 
 
 class StringField(BaseField):
+    type: str
     format: Optional[Literal["uri"]] = None
 
     @property
@@ -61,6 +62,7 @@ class StringField(BaseField):
 
 
 class IntegerField(BaseField):
+    type: str
     default: Optional[int] = None
     minimum: Optional[int] = None
     maximum: Optional[int] = None
@@ -85,6 +87,7 @@ class IntegerField(BaseField):
 
 
 class FloatField(BaseField):
+    type: str
     minimum: Optional[Union[int, float]] = None
     maximum: Optional[int] = None
 
@@ -94,6 +97,7 @@ class FloatField(BaseField):
 
 
 class BooleanField(BaseField):
+    type: str
     default: Optional[bool] = None
 
     @property
@@ -114,12 +118,15 @@ class BooleanField(BaseField):
 
 
 class DictField(BaseField):
+    type: str
+
     @property
     def __typehint__(self) -> str:
         return "dict"
 
 
 class ArrayField(BaseField):
+    type: str
     items: BaseArrayItem
 
     @property
@@ -127,7 +134,28 @@ class ArrayField(BaseField):
         return f"list[{self.items.__typehint__}]"
 
 
+class UnionField(BaseField):
+    type: list[str]
+
+    @property
+    def __typehint__(self) -> str:
+        types = ", ".join(self.get_types())
+        return f"typing.Union[{types}]"
+
+    def get_types(self) -> list[str]:
+        types = []
+        for type_field in self.type:
+            if type_field == "string":
+                types.append("str")
+            elif type_field == "integer":
+                types.append("int")
+            else:
+                raise TypeError(f"Unknown union type: {type_field}")
+        return types
+
+
 class StringEnumProperty(StringField):
+    type: str
     enum: list[str]
     enumNames: Optional[list[str]] = None
 
@@ -137,6 +165,7 @@ class StringEnumProperty(StringField):
 
 
 class IntegerEnumProperty(IntegerField):
+    type: str
     enum: list[int]
     enumNames: list[str]
 
@@ -156,6 +185,8 @@ def get_property_from_dict(item: dict, name: str) -> BaseField:
         return ReferenceField(name=name, reference=reference, **item)
 
     property_type = item.get("type")
+    if isinstance(property_type, list):
+        return UnionField(name=name, **item)
     if property_type == "array":
         item["items"] = get_item_from_dict(item["items"])
         return ArrayField(name=name, **item)
