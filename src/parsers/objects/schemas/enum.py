@@ -43,6 +43,7 @@ class EnumIntegerSchema(EnumSchema):
         for enum, enum_name in zip(self.enum, self.enumNames):
             enum_name = enum_name.upper().replace(" ", "_")
             class_string += f"\t{enum_name} = {enum}\n"
+        class_string += "\n"
         return class_string
 
 
