@@ -1,3 +1,3 @@
 import re
 
-REFERENCE_REGEX = re.compile(r"\.\./[a-z]+/objects\.json#/definitions/([a-z_]+)")
+REFERENCE_REGEX = re.compile(r"\.\./[a-zA-Z]+/objects\.json#/definitions/([a-zA-Z_]+)")
