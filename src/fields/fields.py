@@ -156,23 +156,19 @@ class UnionField(BaseField):
 
 
 class StringEnumProperty(StringField):
+    __typehint__: str
+
     type: str
     enum: list[str]
     enumNames: Optional[list[str]] = None
 
-    @property
-    def __typehint__(self) -> str:
-        return to_camel_case(self.name)
-
 
 class IntegerEnumProperty(IntegerField):
+    __typehint__: str
+
     type: str
     enum: list[int]
     enumNames: list[str]
-
-    @property
-    def __typehint__(self) -> str:
-        return to_camel_case(self.name)
 
 
 def get_property_from_dict(object_name: str, item: dict, name: str) -> BaseField:
@@ -209,9 +205,8 @@ def get_property_from_dict(object_name: str, item: dict, name: str) -> BaseField
 
 def _get_enum_property(object_name: str, item: dict, name: str) -> BaseField:
     property_type = item["type"]
-    if name == "type":
-        name = f"{object_name}_{name}"
+    typehint = to_camel_case(f"{object_name}_{name}")
     if property_type == "string":
-        return StringEnumProperty(name=name, **item)
+        return StringEnumProperty(__typehint__=typehint, name=name, **item)
     else:
-        return IntegerEnumProperty(name=name, **item)
+        return IntegerEnumProperty(__typehint__=typehint, name=name, **item)

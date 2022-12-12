@@ -71,8 +71,7 @@ def get_enums_from_properties(object_name: str, properties: dict[str, dict]) -> 
             continue
         # Property of enum can be required, but for generating enums class it is not needed
         data.pop("required", None)
-        if property_name == "type":
-            property_name = f"{object_name}_type"
+        property_name = f"{object_name}_{property_name}"
         enum = get_enum_from_dict(property_name, data)
         result.append(enum)
     return result
