@@ -4,7 +4,7 @@ from typing import Literal, Optional, Union
 
 from msgspec import Struct
 
-from src.strings import get_reference, to_camel_case, to_python_types
+from src.strings import get_reference, to_camel_case, to_python_types, validate_field
 
 from .array import BaseArrayItem, get_item_from_dict
 
@@ -172,11 +172,9 @@ class IntegerEnumProperty(IntegerField):
 
 
 def get_property_from_dict(object_name: str, item: dict, name: str) -> BaseField:
-    if name[0].isdigit():
-        name = f"_{name}"
-
+    name = validate_field(name)
     if item.get("enum") is not None:
-        return _get_enum_property(object_name, item, name)
+        return _get_enum_property(name=name, object_name=object_name, item=item)
     if item.get("$ref") is not None:
         reference = item.pop("$ref")
         return ReferenceField(name=name, reference=reference, **item)

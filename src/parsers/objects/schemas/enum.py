@@ -1,6 +1,6 @@
 from typing import Optional
 
-from src.strings import to_camel_case
+from src.strings import to_camel_case, validate_field
 
 from .base import BaseSchema
 
@@ -15,12 +15,10 @@ class EnumStringSchema(EnumSchema):
     enumNames: Optional[list[str]] = None
 
     def __str__(self):
-        # fmt: off
-        class_string = (
-            f'class {self.name}(enum.Enum):\n'
-            f'    """{self.description}"""\n'
-        )
-        # fmt: on
+        class_string = f"class {self.name}(enum.Enum):\n"
+        if self.description is not None:
+            class_string += f'    """{self.description}"""\n'
+
         if self.enumNames is not None:
             for enum, enum_name in zip(self.enum, self.enumNames):
                 enum_name = enum_name.upper().replace(" ", "_")
@@ -40,12 +38,10 @@ class EnumIntegerSchema(EnumSchema):
     minimum: Optional[int] = None
 
     def __str__(self):
-        # fmt: off
-        class_string = (
-            f'class {self.name}(enum.IntEnum):\n'
-            f'    """{self.description}"""\n'
-        )
-        # fmt: on
+        class_string = f"class {self.name}(enum.IntEnum):\n"
+        if self.description is not None:
+            class_string += f'    """{self.description}"""\n'
+
         for enum, enum_name in zip(self.enum, self.enumNames):
             enum_name = enum_name.upper().replace(" ", "_")
             class_string += f"    {enum_name} = {enum}\n"
@@ -54,11 +50,24 @@ class EnumIntegerSchema(EnumSchema):
 
 
 def get_enum_from_dict(name: str, enum_data: dict) -> EnumSchema:
+    _validate_enum(enum_data)
     if enum_data["type"] == "string":
         return EnumStringSchema(name=name, **enum_data)
     elif enum_data["type"] == "integer":
         return EnumIntegerSchema(name=name, **enum_data)
     raise ValueError(f"Unknown enum type: {enum_data}")
+
+
+def _validate_enum(enum_data: dict):
+    names = []
+    if enum_data.get("enumNames") is not None:
+        enum_names = enum_data["enumNames"]
+    else:
+        enum_names = enum_data["enum"]
+
+    for enum_name in enum_names:
+        names.append(validate_field(enum_name))
+    enum_data["enumNames"] = names
 
 
 def get_enums_from_properties(object_name: str, properties: dict[str, dict]) -> list[EnumSchema]:
