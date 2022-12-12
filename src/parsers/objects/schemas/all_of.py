@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from msgspec import Struct
 
 from src.strings import get_reference, to_camel_case
@@ -9,15 +11,20 @@ from .object import ObjectSchema
 
 
 class AllOfObjectSchema(BaseSchema):
-    object_schema: ObjectSchema
+    object_schema: Optional[ObjectSchema] = None
     """Last element from "allOf" object from schema"""
     allOf: list[ReferenceAllOf]
 
     @classmethod
     def from_dict(cls, name, all_of: list[dict]) -> AllOfObjectSchema:
-        object_index = _get_index_object(all_of)
-        object_schema = all_of.pop(object_index)
-        object_schema = ObjectSchema.from_dict(name, object_schema["properties"])
+        try:
+            object_index = _get_index_object(all_of)
+        except ValueError:
+            object_schema = None
+        else:
+            object_schema = all_of.pop(object_index)
+            object_schema = ObjectSchema.from_dict(name, object_schema["properties"])
+
         references = []
         for reference in all_of:
             reference = ReferenceAllOf(reference=reference["$ref"])
@@ -31,6 +38,10 @@ class AllOfObjectSchema(BaseSchema):
 
         name = to_camel_case(self.name)
         class_string = f"class {name}({child_classes}):\n"
+        if self.object_schema is None:
+            class_string += "    pass\n\n"
+            return class_string
+
         for property_ in self.object_schema.properties:
             class_string += str(property_)
         class_string += "\n"
