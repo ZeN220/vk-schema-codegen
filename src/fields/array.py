@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 
 from msgspec import Struct
 
@@ -26,6 +26,8 @@ class IntegerArrayItem(BaseArrayItem):
     minimum: Optional[int] = None
     maximum: Optional[int] = None
     default: Optional[int] = None
+    entity: Optional[Literal["owner"]] = None
+    format: Optional[Literal["int64"]] = None
 
 
 class ReferenceArrayItem(BaseArrayItem):
