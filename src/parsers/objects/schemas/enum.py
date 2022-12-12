@@ -29,7 +29,7 @@ class EnumStringSchema(EnumSchema):
         else:
             for enum in self.enum:
                 enum_name = enum.upper()
-                class_string += f'    {enum_name} = "{enum_name}"\n'
+                class_string += f'    {enum_name} = "{enum}"\n'
         class_string += "\n"
         return class_string
 
