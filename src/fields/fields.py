@@ -209,6 +209,9 @@ def get_property_from_dict(item: dict, name: str) -> BaseField:
     if property_type == "object":
         return DictField(name=name, **item)
     if property_type == "string":
+        # Some properties with the type "string" may have the field "minimum".
+        # I do not know what it is for, so it is simply deleted
+        item.pop("minimum", None)
         return StringField(name=name, **item)
     if property_type == "integer":
         return IntegerField(name=name, **item)
