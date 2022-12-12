@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from msgspec import Struct
 
-from src.strings import get_reference
+from src.strings import get_reference, to_python_types
 
 
 class BaseArrayItem(Struct):
@@ -30,6 +30,15 @@ class IntegerArrayItem(BaseArrayItem):
     format: Optional[Literal["int64"]] = None
 
 
+class UnionArrayItem(BaseArrayItem):
+    type: list[str]
+
+    @property
+    def __typehint__(self) -> str:
+        types = ", ".join(to_python_types(self.type))
+        return f"typing.Union[{types}]"
+
+
 class ReferenceArrayItem(BaseArrayItem):
     reference: str
     """Alias for '$ref'"""
@@ -54,6 +63,8 @@ def get_item_from_dict(item: dict) -> BaseArrayItem:
         return ReferenceArrayItem(reference=item["$ref"])
 
     item_type = item["type"]
+    if isinstance(item_type, list):
+        return UnionArrayItem(**item)
     if item_type == "string":
         return StringArrayItem(**item)
     if item_type == "integer":
