@@ -39,6 +39,7 @@ class ReferenceField(BaseField):
     but it is required for parsing.
     """
     reference: str
+    default: Optional[str] = None
 
     def get_reference(self) -> str:
         result = REFERENCE_REGEX.match(self.reference)
@@ -50,6 +51,21 @@ class ReferenceField(BaseField):
     def __typehint__(self) -> str:
         reference = self.get_reference()
         return to_camel_case(reference)
+
+    def __str__(self):
+        typehint = self.__typehint__
+        if self.default is not None:
+            # If reference to have default value, then this value is the field of enum
+            default_value = f"{typehint}.{self.default.upper()}"
+            string = f"    {self.name}: {typehint} = {default_value}\n"
+        elif self.required:
+            string = f"    {self.name}: {typehint}\n"
+        else:
+            string = f"    {self.name}: typing.Optional[{typehint}] = None\n"
+
+        if self.description is not None:
+            string += f'    """{self.description}"""\n'
+        return string
 
 
 class StringField(BaseField):
