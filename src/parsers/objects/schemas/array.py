@@ -11,6 +11,7 @@ from .base import BaseSchema
 class ArraySchema(BaseSchema):
     type: str
     items: BaseArrayItem
+    deprecated_from_version: Optional[str] = None
     minItems: Optional[int] = None
     maxItems: Optional[int] = None
     description: Optional[str] = None
