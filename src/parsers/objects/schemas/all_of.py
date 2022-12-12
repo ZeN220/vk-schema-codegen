@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from msgspec import Struct
 
-from src.strings import REFERENCE_REGEX, to_camel_case
+from src.strings import get_reference, to_camel_case
 
 from .base import BaseSchema
 from .object import ObjectSchema
@@ -26,7 +26,7 @@ class AllOfObjectSchema(BaseSchema):
         return schema
 
     def __str__(self):
-        references = [reference.get_reference() for reference in self.allOf]
+        references = [get_reference(element.reference) for element in self.allOf]
         child_classes = ", ".join(references)
 
         name = to_camel_case(self.name)
@@ -39,13 +39,6 @@ class AllOfObjectSchema(BaseSchema):
 
 class ReferenceAllOf(Struct):
     reference: str
-
-    def get_reference(self) -> str:
-        reference = REFERENCE_REGEX.match(self.reference)
-        if reference is None:
-            raise ValueError(f"Invalid reference: {self.reference}")
-        result = to_camel_case(reference.group(1))
-        return result
 
 
 def _get_index_object(all_of: list[dict]) -> int:

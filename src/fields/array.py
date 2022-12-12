@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from msgspec import Struct
 
-from src.strings import REFERENCE_REGEX, to_camel_case
+from src.strings import get_reference
 
 
 class BaseArrayItem(Struct):
@@ -36,10 +36,7 @@ class ReferenceArrayItem(BaseArrayItem):
 
     @property
     def __typehint__(self) -> str:
-        reference = REFERENCE_REGEX.match(self.reference)
-        if reference is None:
-            raise ValueError(f"Invalid reference: {self.reference}")
-        result = to_camel_case(reference.group(1))
+        result = get_reference(self.reference)
         return result
 
 

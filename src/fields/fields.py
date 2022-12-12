@@ -4,7 +4,7 @@ from typing import Literal, Optional, Union
 
 from msgspec import Struct
 
-from src.strings import REFERENCE_REGEX, to_camel_case
+from src.strings import get_reference, to_camel_case
 
 from .array import BaseArrayItem, get_item_from_dict
 
@@ -41,16 +41,10 @@ class ReferenceField(BaseField):
     reference: str
     default: Optional[str] = None
 
-    def get_reference(self) -> str:
-        result = REFERENCE_REGEX.match(self.reference)
-        if result is None:
-            raise ValueError(f"Invalid reference: {self.reference}")
-        return result.group(1)
-
     @property
     def __typehint__(self) -> str:
-        reference = self.get_reference()
-        return to_camel_case(reference)
+        reference = get_reference(self.reference)
+        return reference
 
     def __str__(self):
         typehint = self.__typehint__

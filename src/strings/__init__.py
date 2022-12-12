@@ -1,4 +1,4 @@
 from .converter import to_camel_case
-from .regexp import REFERENCE_REGEX
+from .reference import get_reference
 
-__all__ = ["to_camel_case", "REFERENCE_REGEX"]
+__all__ = ["to_camel_case", "get_reference"]
