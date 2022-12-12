@@ -13,7 +13,7 @@ class ObjectSchema(BaseSchema):
     def from_dict(cls, name, properties: dict[str, dict]) -> ObjectSchema:
         result = []
         for property_name, property_value in properties.items():
-            obj = get_property_from_dict(property_value, name=property_name)
+            obj = get_property_from_dict(object_name=name, name=property_name, item=property_value)
             result.append(obj)
         schema = cls(name=name, properties=result)
         return schema
