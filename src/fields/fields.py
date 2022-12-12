@@ -4,7 +4,7 @@ from typing import Literal, Optional, Union
 
 from msgspec import Struct
 
-from src.strings import get_reference, to_camel_case
+from src.strings import get_reference, to_camel_case, to_python_types
 
 from .array import BaseArrayItem, get_item_from_dict
 
@@ -149,19 +149,9 @@ class UnionField(BaseField):
 
     @property
     def __typehint__(self) -> str:
-        types = ", ".join(self.get_types())
+        python_types = to_python_types(self.type)
+        types = ", ".join(python_types)
         return f"typing.Union[{types}]"
-
-    def get_types(self) -> list[str]:
-        types = []
-        for type_field in self.type:
-            if type_field == "string":
-                types.append("str")
-            elif type_field == "integer":
-                types.append("int")
-            else:
-                raise ValueError(f"Unknown union type: {type_field}")
-        return types
 
 
 class StringEnumProperty(StringField):
