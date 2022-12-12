@@ -24,4 +24,8 @@ class ArraySchema(BaseSchema):
 
     def __str__(self):
         name = to_camel_case(self.name)
-        return f"{name} = list[{self.items.__typehint__}]  # {self.description}\n\n"
+        string = f"{name} = list[{self.items.__typehint__}]"
+        if self.description is not None:
+            string += f"  # {self.description}"
+        string += "\n\n"
+        return string
