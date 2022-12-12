@@ -4,7 +4,7 @@ from typing import Optional
 
 from msgspec import Struct
 
-from src.strings import get_reference, to_camel_case
+from src.strings import get_reference
 
 from .base import BaseSchema
 from .object import ObjectSchema
@@ -36,8 +36,7 @@ class AllOfObjectSchema(BaseSchema):
         references = [get_reference(element.reference) for element in self.allOf]
         child_classes = ", ".join(references)
 
-        name = to_camel_case(self.name)
-        class_string = f"class {name}({child_classes}):\n"
+        class_string = f"class {self.name}({child_classes}):\n"
         if self.object_schema is None:
             class_string += "    pass\n\n"
             return class_string

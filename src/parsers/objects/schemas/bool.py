@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import Optional
 
-from src.strings import to_camel_case
-
 from .base import BaseSchema
 
 
@@ -17,8 +15,7 @@ class BoolSchema(BaseSchema):
         return schema
 
     def __str__(self):
-        name = to_camel_case(self.name)
-        string = f"{name} = bool"
+        string = f"{self.name} = bool"
         if self.description is not None:
             string += f"  # {self.description}"
         string += "\n\n"

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from src.fields import BaseField, get_property_from_dict
-from src.strings import to_camel_case
 
 from .base import BaseSchema
 
@@ -19,11 +18,10 @@ class ObjectSchema(BaseSchema):
         return schema
 
     def __str__(self):
-        name = to_camel_case(self.name)
-        class_string = f"class {name}(pydantic.BaseModel):\n"
-
+        class_string = f"class {self.name}(pydantic.BaseModel):\n"
         for property_ in self.properties:
             class_string += str(property_)
+
         if not self.properties:
             class_string += "   pass\n"
         class_string += "\n"

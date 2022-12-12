@@ -1,4 +1,4 @@
-from src.strings import get_reference, to_camel_case
+from src.strings import get_reference
 
 from .base import BaseSchema
 
@@ -12,11 +12,10 @@ class ReferenceSchema(BaseSchema):
         return schema
 
     def __str__(self):
-        name = to_camel_case(self.name)
         reference = get_reference(self.reference)
         # fmt: off
         class_string = (
-            f"class {name}({reference}):\n"
+            f"class {self.name}({reference}):\n"
             f"    pass\n\n"
         )
         # fmt: on

@@ -15,10 +15,9 @@ class EnumStringSchema(EnumSchema):
     enumNames: Optional[list[str]] = None
 
     def __str__(self):
-        name = to_camel_case(self.name)
         # fmt: off
         class_string = (
-            f'class {name}(enum.Enum):\n'
+            f'class {self.name}(enum.Enum):\n'
             f'    """{self.description}"""\n'
         )
         # fmt: on
@@ -41,10 +40,9 @@ class EnumIntegerSchema(EnumSchema):
     minimum: Optional[int] = None
 
     def __str__(self):
-        name = to_camel_case(self.name)
         # fmt: off
         class_string = (
-            f'class {name}(enum.IntEnum):\n'
+            f'class {self.name}(enum.IntEnum):\n'
             f'    """{self.description}"""\n'
         )
         # fmt: on
@@ -71,7 +69,7 @@ def get_enums_from_properties(object_name: str, properties: dict[str, dict]) -> 
             continue
         # Property of enum can be required, but for generating enums class it is not needed
         data.pop("required", None)
-        property_name = f"{object_name}_{property_name}"
+        property_name = to_camel_case(f"{object_name}_{property_name}")
         enum = get_enum_from_dict(property_name, data)
         result.append(enum)
     return result
