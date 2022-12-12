@@ -63,7 +63,7 @@ def get_enum_from_dict(name: str, enum_data: dict) -> EnumSchema:
     raise ValueError(f"Unknown enum type: {enum_data}")
 
 
-def get_enums_from_properties(properties: dict[str, dict]) -> list[EnumSchema]:
+def get_enums_from_properties(object_name: str, properties: dict[str, dict]) -> list[EnumSchema]:
     result = []
     properties = properties.copy()
     for property_name, data in properties.items():
@@ -71,6 +71,8 @@ def get_enums_from_properties(properties: dict[str, dict]) -> list[EnumSchema]:
             continue
         # Property of enum can be required, but for generating enums class it is not needed
         data.pop("required", None)
+        if property_name == "type":
+            property_name = f"{object_name}_type"
         enum = get_enum_from_dict(property_name, data)
         result.append(enum)
     return result

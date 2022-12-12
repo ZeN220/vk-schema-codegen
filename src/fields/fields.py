@@ -175,12 +175,12 @@ class IntegerEnumProperty(IntegerField):
         return to_camel_case(self.name)
 
 
-def get_property_from_dict(item: dict, name: str) -> BaseField:
+def get_property_from_dict(object_name: str, item: dict, name: str) -> BaseField:
     if name[0].isdigit():
         name = f"_{name}"
 
     if item.get("enum") is not None:
-        return _get_enum_property(item, name)
+        return _get_enum_property(object_name, item, name)
     if item.get("$ref") is not None:
         reference = item.pop("$ref")
         return ReferenceField(name=name, reference=reference, **item)
@@ -193,22 +193,24 @@ def get_property_from_dict(item: dict, name: str) -> BaseField:
         return ArrayField(name=name, **item)
     if property_type == "object":
         return DictField(name=name, **item)
-    if property_type == "string":
-        # Some properties with the type "string" may have the field "minimum".
-        # I do not know what it is for, so it is simply deleted
-        item.pop("minimum", None)
-        return StringField(name=name, **item)
     if property_type == "integer":
         return IntegerField(name=name, **item)
     if property_type == "number":
         return FloatField(name=name, **item)
     if property_type == "boolean":
         return BooleanField(name=name, **item)
+    if property_type == "string":
+        # Some properties with the type "string" may have the field "minimum".
+        # I do not know what it is for, so it is simply deleted
+        item.pop("minimum", None)
+        return StringField(name=name, **item)
     raise ValueError(f"Unknown property type: {property_type}")
 
 
-def _get_enum_property(item: dict, name: str) -> BaseField:
+def _get_enum_property(object_name: str, item: dict, name: str) -> BaseField:
     property_type = item["type"]
+    if name == "type":
+        name = f"{object_name}_{name}"
     if property_type == "string":
         return StringEnumProperty(name=name, **item)
     else:
