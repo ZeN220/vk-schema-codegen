@@ -13,7 +13,6 @@ class EnumSchema(BaseSchema):
 class EnumStringSchema(EnumSchema):
     enum: list[str]
     enumNames: Optional[list[str]] = None
-    """In schema of API this name is in CamelCase"""
 
     def __str__(self):
         name = to_camel_case(self.name)
@@ -38,7 +37,6 @@ class EnumStringSchema(EnumSchema):
 class EnumIntegerSchema(EnumSchema):
     enum: list[int]
     enumNames: list[str]
-    """In schema of API this name is in CamelCase"""
     default: Optional[int] = None
     minimum: Optional[int] = None
 
