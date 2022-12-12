@@ -26,11 +26,11 @@ class EnumStringSchema(EnumSchema):
         if self.enumNames is not None:
             for enum, enum_name in zip(self.enum, self.enumNames):
                 enum_name = enum_name.upper().replace(" ", "_")
-                class_string += f'\t{enum_name} = "{enum}"\n'
+                class_string += f'    {enum_name} = "{enum}"\n'
         else:
             for enum in self.enum:
                 enum_name = enum.upper()
-                class_string += f'\t{enum_name} = "{enum_name}"\n'
+                class_string += f'    {enum_name} = "{enum_name}"\n'
         class_string += "\n"
         return class_string
 
@@ -52,7 +52,7 @@ class EnumIntegerSchema(EnumSchema):
         # fmt: on
         for enum, enum_name in zip(self.enum, self.enumNames):
             enum_name = enum_name.upper().replace(" ", "_")
-            class_string += f"\t{enum_name} = {enum}\n"
+            class_string += f"    {enum_name} = {enum}\n"
         class_string += "\n"
         return class_string
 
