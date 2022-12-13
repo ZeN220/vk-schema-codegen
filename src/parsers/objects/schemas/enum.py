@@ -70,7 +70,7 @@ def _validate_enum(enum_data: dict):
     enum_data["enumNames"] = names
 
 
-def get_enums_from_properties(object_name: str, properties: dict[str, dict]) -> list[EnumSchema]:
+def get_enums_from_object(object_name: str, properties: dict[str, dict]) -> list[EnumSchema]:
     result = []
     properties = properties.copy()
     for property_name, data in properties.items():
@@ -81,4 +81,13 @@ def get_enums_from_properties(object_name: str, properties: dict[str, dict]) -> 
         property_name = to_camel_case(f"{object_name}_{property_name}")
         enum = get_enum_from_dict(property_name, data)
         result.append(enum)
+    return result
+
+
+def get_enums_from_all_of(object_name: str, all_of: list[dict]) -> list[EnumSchema]:
+    result = []
+    for item in all_of:
+        if item.get("properties") is not None:
+            enums = get_enums_from_object(object_name, item["properties"])
+            result.extend(enums)
     return result
