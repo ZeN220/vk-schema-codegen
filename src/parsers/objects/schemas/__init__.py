@@ -1,4 +1,4 @@
-from .all_of import AllOfObjectSchema
+from .all_of import AllOfSchema
 from .array import ArraySchema
 from .base import BaseSchema
 from .bool import BoolSchema
@@ -11,7 +11,7 @@ __all__ = [
     "ObjectSchema",
     "EnumSchema",
     "ArraySchema",
-    "AllOfObjectSchema",
+    "AllOfSchema",
     "ReferenceSchema",
     "BoolSchema",
 ]

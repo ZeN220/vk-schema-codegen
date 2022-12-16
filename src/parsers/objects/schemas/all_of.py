@@ -10,13 +10,13 @@ from .base import BaseSchema
 from .object import ObjectSchema
 
 
-class AllOfObjectSchema(BaseSchema):
+class AllOfSchema(BaseSchema):
     object_schema: Optional[ObjectSchema] = None
     """Last element from "allOf" object from schema"""
     allOf: list[ReferenceAllOf]
 
     @classmethod
-    def from_dict(cls, name, all_of: list[dict]) -> AllOfObjectSchema:
+    def from_dict(cls, name, all_of: list[dict]) -> AllOfSchema:
         try:
             object_index = _get_index_object(all_of)
         except ValueError:
