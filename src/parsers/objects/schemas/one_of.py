@@ -28,11 +28,11 @@ class OneOfSchema(BaseSchema):
         schema = cls(name=name, oneOf=references)
         return schema
 
-    def __str__(self):
-        if self.oneOf is not None:
-            return self._get_one_of_string()
-        types = ", ".join(self.types)
-        return f"{self.name} = typing.Union[{types}]\n\n"
+    def to_class(self) -> str:
+        if self.types is not None:
+            types = ", ".join(self.types)
+            return f"{self.name} = typing.Union[{types}]\n\n"
+        return self._get_one_of_string()
 
     def _get_one_of_string(self):
         references = [get_reference(element.reference) for element in self.oneOf]

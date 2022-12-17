@@ -32,7 +32,7 @@ class AllOfSchema(BaseSchema):
         schema = cls(name=name, object_schema=object_schema, allOf=references)
         return schema
 
-    def __str__(self):
+    def to_class(self) -> str:
         references = [get_reference(element.reference) for element in self.allOf]
         child_classes = ", ".join(references)
 
@@ -42,7 +42,7 @@ class AllOfSchema(BaseSchema):
             return class_string
 
         for property_ in self.object_schema.properties:
-            class_string += str(property_)
+            class_string += property_.to_field_class()
         class_string += "\n"
         return class_string
 

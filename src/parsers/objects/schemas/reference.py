@@ -11,7 +11,7 @@ class ReferenceSchema(BaseSchema):
         schema = cls(name=name, reference=data["$ref"])
         return schema
 
-    def __str__(self):
+    def to_class(self) -> str:
         reference = get_reference(self.reference)
         # fmt: off
         class_string = (

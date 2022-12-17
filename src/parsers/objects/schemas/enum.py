@@ -9,12 +9,15 @@ class EnumSchema(BaseSchema):
     type: str
     description: Optional[str] = None
 
+    def to_class(self) -> str:
+        raise NotImplementedError
+
 
 class EnumStringSchema(EnumSchema):
     enum: list[str]
     enumNames: Optional[list[str]] = None
 
-    def __str__(self):
+    def to_class(self) -> str:
         class_string = f"class {self.name}(enum.Enum):\n"
         if self.description is not None:
             class_string += f'    """{self.description}"""\n'
@@ -37,7 +40,7 @@ class EnumIntegerSchema(EnumSchema):
     default: Optional[int] = None
     minimum: Optional[int] = None
 
-    def __str__(self):
+    def to_class(self) -> str:
         class_string = f"class {self.name}(enum.IntEnum):\n"
         if self.description is not None:
             class_string += f'    """{self.description}"""\n'
