@@ -23,6 +23,6 @@ class ObjectSchema(BaseSchema):
             class_string += property_.to_field_class()
 
         if not self.properties:
-            class_string += "   pass\n"
+            class_string += "    pass\n"
         class_string += "\n"
         return class_string
