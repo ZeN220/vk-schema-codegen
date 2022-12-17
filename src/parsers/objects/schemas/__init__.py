@@ -4,6 +4,7 @@ from .base import BaseSchema
 from .bool import BoolSchema
 from .enum import EnumSchema
 from .object import ObjectSchema
+from .one_of import OneOfSchema
 from .reference import ReferenceSchema
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "AllOfSchema",
     "ReferenceSchema",
     "BoolSchema",
+    "OneOfSchema",
 ]

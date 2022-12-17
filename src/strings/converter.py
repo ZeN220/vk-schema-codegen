@@ -12,6 +12,8 @@ def to_python_types(types: list[str]) -> list[str]:
             result.append("str")
         elif type_field == "integer":
             result.append("int")
+        elif type_field == "boolean":
+            result.append("bool")
         else:
             raise ValueError(f"Unknown union type: {type_field}")
     return result
