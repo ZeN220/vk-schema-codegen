@@ -155,6 +155,21 @@ class UnionField(BaseField):
         return f"typing.Union[{types}]"
 
 
+class OneOfField(BaseField):
+    type: str = "oneOf"
+    """
+    This field is missing from original schema for this property,
+    but it is required for parsing.
+    """
+    oneOf: list[BaseField]
+
+    @property
+    def __typehint__(self) -> str:
+        typehints = [field.__typehint__ for field in self.oneOf]
+        types = ", ".join(typehints)
+        return f"typing.Union[{types}]"
+
+
 class StringEnumProperty(StringField):
     __typehint__: str
 
@@ -178,6 +193,12 @@ def get_property_from_dict(object_name: str, item: dict, name: str) -> BaseField
     if item.get("$ref") is not None:
         reference = item.pop("$ref")
         return ReferenceField(name=name, reference=reference, **item)
+    if item.get("oneOf") is not None:
+        one_of = item.pop("oneOf")
+        # Fields of oneOf are not required a name, but the function requires it.
+        # So we add name of oneOf field
+        one_of = [get_property_from_dict(object_name, item, name) for item in one_of]
+        return OneOfField(name=name, oneOf=one_of, **item)
 
     property_type = item.get("type")
     if isinstance(property_type, list):
