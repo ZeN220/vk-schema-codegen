@@ -20,7 +20,7 @@ class BaseField(Struct):
     def __typehint__(self) -> str:
         raise NotImplementedError
 
-    def __str__(self):
+    def to_field_class(self):
         typehint = self.__typehint__
         if self.required:
             string = f"    {self.name}: {typehint}\n"
@@ -46,7 +46,7 @@ class ReferenceField(BaseField):
         reference = get_reference(self.reference)
         return reference
 
-    def __str__(self):
+    def to_field_class(self):
         typehint = self.__typehint__
         if self.default is not None:
             # If reference to have default value, then this value is the field of enum
@@ -84,7 +84,7 @@ class IntegerField(BaseField):
     def __typehint__(self) -> str:
         return "int"
 
-    def __str__(self):
+    def to_field_class(self):
         if self.default is not None:
             string = f"    {self.name}: int = {self.default}\n"
         elif self.required:
@@ -115,7 +115,7 @@ class BooleanField(BaseField):
     def __typehint__(self) -> str:
         return "bool"
 
-    def __str__(self):
+    def to_field_class(self):
         if self.default is not None:
             string = f"    {self.name}: bool = {self.default}\n"
         elif self.required:
