@@ -4,45 +4,49 @@ from typing import Optional
 
 from msgspec import Struct
 
-from src.strings import get_reference, to_python_types
+from src.strings import get_reference, to_python_type
 
 from .base import BaseSchema
 
 
 class OneOfSchema(BaseSchema):
-    oneOf: Optional[list[ReferenceOneOf]] = None
-    types: Optional[list[str]] = None
-    """Some objects, which have "oneOf" field, are not classes, but just union type."""
+    oneOf: list[ElementOneOf]
 
     @classmethod
     def from_dict(cls, name, one_of: list[dict]) -> OneOfSchema:
-        references = []
-        if any(element.get("$ref") is None for element in one_of):
-            types = [element["type"] for element in one_of]
-            python_types = to_python_types(types)
-            return cls(name=name, types=python_types)
-        for reference in one_of:
-            ref = reference.pop("$ref")
-            reference = ReferenceOneOf(reference=ref, **reference)
-            references.append(reference)
-        schema = cls(name=name, oneOf=references)
+        one_of_elements = []
+        for element in one_of:
+            if element.get("$ref") is not None:
+                ref = element.pop("$ref")
+                reference = ReferenceOneOf(reference=ref, **element)
+                one_of_elements.append(reference)
+            else:
+                element_type = to_python_type(element.pop("type"))
+                one_of_elements.append(ElementOneOf(type=element_type, **element))
+        schema = cls(name=name, oneOf=one_of_elements)
         return schema
 
     def to_class(self) -> str:
-        if self.types is not None:
-            types = ", ".join(self.types)
-            return f"{self.name} = typing.Union[{types}]\n\n"
-        return self._get_one_of_string()
+        union_types = []
+        for element in self.oneOf:
+            if isinstance(element, ReferenceOneOf):
+                typehint = get_reference(element.reference)
+                union_types.append(typehint)
+            else:
+                union_types.append(element.type)
+        types = ", ".join(union_types)
+        string = f"{self.name} = typing.Union[{types}]\n\n"
+        if len(string) > 100:
+            types = types.replace(", ", ",\n    ")
+            string = f"{self.name} = typing.Union[\n    {types}\n]\n\n"
+        return string
 
-    def _get_one_of_string(self):
-        references = [get_reference(element.reference) for element in self.oneOf]
-        child_classes = ", ".join(references)
 
-        class_string = f"class {self.name}({child_classes}):\n"
-        class_string += "    pass\n\n"
-        return class_string
+class ElementOneOf(Struct):
+    type: str
 
 
-class ReferenceOneOf(Struct):
+class ReferenceOneOf(ElementOneOf):
+    type: str = "reference"
     reference: str
     description: Optional[str] = None
