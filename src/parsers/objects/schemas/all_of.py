@@ -33,6 +33,9 @@ class AllOfSchema(BaseSchema):
         return schema
 
     def to_class(self) -> str:
+        if self.name == "NewsfeedItemWallpost":
+            # https://github.com/VKCOM/vk-api-schema/issues/203
+            self.allOf.pop(0)
         references = [get_reference(element.reference) for element in self.allOf]
         child_classes = ", ".join(references)
 
