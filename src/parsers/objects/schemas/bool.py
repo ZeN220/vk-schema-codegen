@@ -14,7 +14,7 @@ class BoolSchema(BaseSchema):
         schema = cls(name=name, **data)
         return schema
 
-    def __str__(self):
+    def to_class(self) -> str:
         string = f"{self.name} = bool"
         if self.description is not None:
             string += f"  # {self.description}"

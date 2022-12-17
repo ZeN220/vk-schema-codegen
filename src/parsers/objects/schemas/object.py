@@ -17,10 +17,10 @@ class ObjectSchema(BaseSchema):
         schema = cls(name=name, properties=result)
         return schema
 
-    def __str__(self):
+    def to_class(self) -> str:
         class_string = f"class {self.name}(pydantic.BaseModel):\n"
         for property_ in self.properties:
-            class_string += str(property_)
+            class_string += property_.to_field_class()
 
         if not self.properties:
             class_string += "   pass\n"
