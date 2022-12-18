@@ -171,7 +171,7 @@ class OneOfField(BaseField):
         return f"typing.Union[{types}]"
 
 
-class StringEnumProperty(StringField):
+class StringEnumField(StringField):
     __typehint__: str
 
     type: str
@@ -179,7 +179,7 @@ class StringEnumProperty(StringField):
     enumNames: Optional[list[str]] = None
 
 
-class IntegerEnumProperty(IntegerField):
+class IntegerEnumField(IntegerField):
     __typehint__: str
 
     type: str
@@ -227,6 +227,6 @@ def _get_enum_property(object_name: str, item: dict, name: str) -> BaseField:
     property_type = item["type"]
     typehint = to_camel_case(f"{object_name}_{name}")
     if property_type == "string":
-        return StringEnumProperty(__typehint__=typehint, name=name, **item)
+        return StringEnumField(__typehint__=typehint, name=name, **item)
     else:
-        return IntegerEnumProperty(__typehint__=typehint, name=name, **item)
+        return IntegerEnumField(__typehint__=typehint, name=name, **item)
