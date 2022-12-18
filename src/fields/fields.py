@@ -187,39 +187,39 @@ class IntegerEnumField(IntegerField):
     enumNames: list[str]
 
 
-def get_property_from_dict(object_name: str, item: dict, name: str) -> BaseField:
-    name = validate_field(name)
+def get_property_from_dict(object_name: str, item: dict, property_name: str) -> BaseField:
+    property_name = validate_field(property_name)
     if item.get("enum") is not None:
-        return _get_enum_property(name=name, object_name=object_name, item=item)
+        return _get_enum_property(name=property_name, object_name=object_name, item=item)
     if item.get("$ref") is not None:
         reference = item.pop("$ref")
-        return ReferenceField(name=name, reference=reference, **item)
+        return ReferenceField(name=property_name, reference=reference, **item)
     if item.get("oneOf") is not None:
         one_of = item.pop("oneOf")
         # Fields of oneOf are not required a name, but the function requires it.
         # So we add name of oneOf field
-        one_of = [get_property_from_dict(object_name, item, name) for item in one_of]
-        return OneOfField(name=name, oneOf=one_of, **item)
+        one_of = [get_property_from_dict(object_name, item, property_name) for item in one_of]
+        return OneOfField(name=property_name, oneOf=one_of, **item)
 
     property_type = item.get("type")
     if isinstance(property_type, list):
-        return UnionField(name=name, **item)
+        return UnionField(name=property_name, **item)
     if property_type == "array":
         item["items"] = get_item_from_dict(item["items"])
-        return ArrayField(name=name, **item)
+        return ArrayField(name=property_name, **item)
     if property_type == "object":
-        return DictField(name=name, **item)
+        return DictField(name=property_name, **item)
     if property_type == "integer":
-        return IntegerField(name=name, **item)
+        return IntegerField(name=property_name, **item)
     if property_type == "number":
-        return FloatField(name=name, **item)
+        return FloatField(name=property_name, **item)
     if property_type == "boolean":
-        return BooleanField(name=name, **item)
+        return BooleanField(name=property_name, **item)
     if property_type == "string":
         # Some properties with the type "string" may have the field "minimum".
         # I do not know what it is for, so it is simply deleted
         item.pop("minimum", None)
-        return StringField(name=name, **item)
+        return StringField(name=property_name, **item)
     raise ValueError(f"Unknown property type: {property_type}")
 
 
