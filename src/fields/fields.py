@@ -85,12 +85,13 @@ class IntegerField(BaseField):
         return "int"
 
     def to_field_class(self):
+        typehint = self.__typehint__
         if self.default is not None:
-            string = f"    {self.name}: int = {self.default}\n"
+            string = f"    {self.name}: {typehint} = {self.default}\n"
         elif self.required:
-            string = f"    {self.name}: int\n"
+            string = f"    {self.name}: {typehint}\n"
         else:
-            string = f"    {self.name}: typing.Optional[int] = None\n"
+            string = f"    {self.name}: typing.Optional[{typehint}] = None\n"
 
         if self.description is not None:
             string += f'    """{self.description}"""\n'
