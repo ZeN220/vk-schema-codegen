@@ -12,15 +12,15 @@ class BaseArrayItem(Struct):
 
 
 class StringArrayItem(BaseArrayItem):
-    __typehint__ = "str"
-
     type: str
     description: Optional[str] = None
 
+    @property
+    def __typehint__(self) -> str:
+        return "str"
+
 
 class IntegerArrayItem(BaseArrayItem):
-    __typehint__ = "int"
-
     type: str
     description: Optional[str] = None
     minimum: Optional[int] = None
@@ -28,6 +28,10 @@ class IntegerArrayItem(BaseArrayItem):
     default: Optional[int] = None
     entity: Optional[Literal["owner"]] = None
     format: Optional[Literal["int64"]] = None
+
+    @property
+    def __typehint__(self) -> str:
+        return "int"
 
 
 class UnionArrayItem(BaseArrayItem):
