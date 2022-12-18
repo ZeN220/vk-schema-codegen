@@ -4,6 +4,7 @@ from .array import (
     NestedArrayItem,
     ReferenceArrayItem,
     StringArrayItem,
+    UnionArrayItem,
     get_item_from_dict,
 )
 from .fields import (
@@ -41,5 +42,6 @@ __all__ = [
     "NestedArrayItem",
     "ReferenceArrayItem",
     "StringArrayItem",
+    "UnionArrayItem",
     "get_item_from_dict",
 ]
