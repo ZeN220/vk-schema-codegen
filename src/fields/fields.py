@@ -118,11 +118,11 @@ class BooleanField(BaseField):
 
     def to_field_class(self):
         if self.default is not None:
-            string = f"    {self.name}: bool = {self.default}\n"
+            string = f"    {self.name}: {self.__typehint__} = {self.default}\n"
         elif self.required:
-            string = f"    {self.name}: bool\n"
+            string = f"    {self.name}: {self.__typehint__}\n"
         else:
-            string = f"    {self.name}: typing.Optional[bool] = None\n"
+            string = f"    {self.name}: typing.Optional[{self.__typehint__}] = None\n"
 
         if self.description is not None:
             string += f'    """{self.description}"""\n'
