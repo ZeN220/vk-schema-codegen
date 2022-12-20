@@ -74,6 +74,7 @@ def get_item_from_dict(item: dict) -> BaseArrayItem:
     if item_type == "integer":
         return IntegerArrayItem(**item)
     if item_type == "array":
-        item["items"] = get_item_from_dict(item["items"])
-        return NestedArrayItem(**item)
+        copy_item = item.copy()
+        copy_item["items"] = get_item_from_dict(copy_item["items"])
+        return NestedArrayItem(**copy_item)
     raise ValueError(f"Unknown array item: {item_type}")

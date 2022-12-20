@@ -17,8 +17,10 @@ class ArraySchema(BaseSchema):
 
     @classmethod
     def from_dict(cls, name, data: dict) -> ArraySchema:
-        data["items"] = get_item_from_dict(data["items"])
-        schema = cls(name=name, **data)
+        # Because we need edit value of items, we need to copy it
+        copy_data = data.copy()
+        copy_data["items"] = get_item_from_dict(copy_data["items"])
+        schema = cls(name=name, **copy_data)
         return schema
 
     def to_class(self) -> str:
