@@ -20,7 +20,7 @@ class EnumStringSchema(EnumSchema):
     def to_class(self) -> str:
         class_string = f"class {self.name}(enum.Enum):\n"
         if self.description is not None:
-            class_string += f'    """{self.description}"""\n'
+            class_string += f'    """{self.description}"""\n\n'
 
         if self.enumNames is not None:
             for enum, enum_name in zip(self.enum, self.enumNames):
@@ -43,7 +43,7 @@ class EnumIntegerSchema(EnumSchema):
     def to_class(self) -> str:
         class_string = f"class {self.name}(enum.IntEnum):\n"
         if self.description is not None:
-            class_string += f'    """{self.description}"""\n'
+            class_string += f'    """{self.description}"""\n\n'
 
         for enum, enum_name in zip(self.enum, self.enumNames):
             enum_name = enum_name.upper().replace(" ", "_")
