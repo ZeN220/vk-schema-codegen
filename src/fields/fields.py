@@ -205,8 +205,9 @@ def get_property_from_dict(object_name: str, item: dict, property_name: str) -> 
     if isinstance(property_type, list):
         return UnionField(name=property_name, **item)
     if property_type == "array":
-        item["items"] = get_item_from_dict(item["items"])
-        return ArrayField(name=property_name, **item)
+        copy_item = item.copy()
+        copy_item["items"] = get_item_from_dict(copy_item["items"])
+        return ArrayField(name=property_name, **copy_item)
     if property_type == "object":
         return DictField(name=property_name, **item)
     if property_type == "integer":

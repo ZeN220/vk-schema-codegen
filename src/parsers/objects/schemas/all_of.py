@@ -17,6 +17,8 @@ class AllOfSchema(BaseSchema):
 
     @classmethod
     def from_dict(cls, name, all_of: list[dict]) -> AllOfSchema:
+        # Because we need edit value of items, we need to copy it
+        all_of = all_of.copy()
         try:
             object_index = _get_index_object(all_of)
         except ValueError:

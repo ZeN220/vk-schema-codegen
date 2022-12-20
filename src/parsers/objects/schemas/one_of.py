@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from typing import Optional
 
 from msgspec import Struct
@@ -15,6 +16,9 @@ class OneOfSchema(BaseSchema):
     @classmethod
     def from_dict(cls, name, one_of: list[dict]) -> OneOfSchema:
         one_of_elements = []
+        # Because we need edit value of items in nested schemas,
+        # we need to call copy.deepcopy for copy
+        one_of = copy.deepcopy(one_of)
         for element in one_of:
             if element.get("$ref") is not None:
                 ref = element.pop("$ref")
