@@ -24,12 +24,12 @@ class AllOfSchema(BaseSchema):
         except ValueError:
             object_schema = None
         else:
-            object_schema = all_of.pop(object_index)
-            object_schema = ObjectSchema.from_dict(name, object_schema["properties"])
+            object_schema_dict = all_of.pop(object_index)
+            object_schema = ObjectSchema.from_dict(name, object_schema_dict["properties"])
 
-        references = []
-        for reference in all_of:
-            reference = ReferenceAllOf(reference=reference["$ref"])
+        references: list[ReferenceAllOf] = []
+        for element in all_of:
+            reference = ReferenceAllOf(reference=element["$ref"])
             references.append(reference)
         schema = cls(name=name, object_schema=object_schema, allOf=references)
         return schema

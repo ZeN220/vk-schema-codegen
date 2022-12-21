@@ -15,7 +15,7 @@ class OneOfSchema(BaseSchema):
 
     @classmethod
     def from_dict(cls, name, one_of: list[dict]) -> OneOfSchema:
-        one_of_elements = []
+        one_of_elements: list[ElementOneOf] = []
         # Because we need edit value of items in nested schemas,
         # we need to call copy.deepcopy for copy
         one_of = copy.deepcopy(one_of)

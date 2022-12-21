@@ -65,9 +65,11 @@ def get_objects(input_dir: Path) -> dict:
 
 def parse_objects(objects: dict) -> list[BaseSchema]:
     objects = validate_order_references(objects)
-    objects_result = []
+    objects_result: list[BaseSchema] = []
     for object_name, value in objects.items():
+        result: BaseSchema
         object_name = to_camel_case(object_name)
+
         if value.get("type") == "array":
             result = ArraySchema.from_dict(object_name, value)
         elif value.get("type") == "boolean":
