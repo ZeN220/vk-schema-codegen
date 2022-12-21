@@ -14,10 +14,7 @@ __pycache__/
 
 # Files of schema VK API
 output/
-errors.json
-responses.json
-objects.json
-methods.json
+vk-api-schema/
 
 # Tests
 .pytest_cache/
