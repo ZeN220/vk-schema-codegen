@@ -20,6 +20,7 @@ Options:
   -o, --output-dir DIRECTORY  Directory to save the output files  [default:
                               output]
   -i, --input-dir DIRECTORY   Directory with the schemas of API methods
+                              [default: vk-api-schema]
   --help                      Show this message and exit.
 
 Commands:
@@ -29,5 +30,5 @@ Commands:
 ### Generate objects
 For generating objects you need to run the following command:
 ```bash
-python -m src objects --input-dir <path to directory with schema files>
+python -m src objects
 ```
