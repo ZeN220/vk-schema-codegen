@@ -5,6 +5,14 @@ import keyword
 from .reference import parse_reference
 
 
+def is_valid_name(string: str) -> bool:
+    if string[0].isdigit():
+        return False
+    if keyword.iskeyword(string):
+        return False
+    return True
+
+
 def validate_field(string: str) -> str:
     if string[0].isdigit():
         return f"_{string}"
