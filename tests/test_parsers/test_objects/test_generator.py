@@ -3,14 +3,14 @@ from pathlib import Path
 
 import pytest
 
-from src.parsers.objects.generator import (
+from src.codegen.objects.generator import (
     IMPORTS,
     generate_classes,
     generate_objects,
     get_objects,
     parse_objects,
 )
-from src.parsers.objects.schemas import (
+from src.codegen.objects.schemas import (
     AllOfSchema,
     ArraySchema,
     BoolSchema,
@@ -18,7 +18,7 @@ from src.parsers.objects.schemas import (
     OneOfSchema,
     ReferenceSchema,
 )
-from src.parsers.objects.schemas.enum import get_enum_from_dict
+from src.codegen.objects.schemas.enum import get_enum_from_dict
 
 
 def create_objects_file(tmp_path: Path, objects: dict):

@@ -1,4 +1,4 @@
-from src.parsers.objects.schemas import AllOfSchema
+from src.codegen.objects.schemas import AllOfSchema
 
 
 class TestAllOfSchema:

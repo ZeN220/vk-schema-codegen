@@ -1,6 +1,6 @@
 import pytest
 
-from src.parsers.objects.schemas.enum import (
+from src.codegen.objects.schemas.enum import (
     EnumIntegerSchema,
     EnumSchema,
     EnumStringSchema,

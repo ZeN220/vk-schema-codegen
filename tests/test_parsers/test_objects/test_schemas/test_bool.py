@@ -1,4 +1,4 @@
-from src.parsers.objects.schemas import BoolSchema
+from src.codegen.objects.schemas import BoolSchema
 
 
 class TestBoolSchema:

@@ -1,4 +1,4 @@
-from src.parsers.objects.schemas import ReferenceSchema
+from src.codegen.objects.schemas import ReferenceSchema
 
 
 class TestReferenceSchema:
