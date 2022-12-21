@@ -19,6 +19,8 @@ from .config import Config
 @click.option(
     "-i",
     "--input-dir",
+    show_default=True,
+    default="vk-api-schema",
     help="Directory with the schemas of API methods",
     type=click.Path(exists=True, file_okay=False, path_type=Path),
 )
