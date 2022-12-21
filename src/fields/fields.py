@@ -4,7 +4,13 @@ from typing import Literal, Optional, Union
 
 from msgspec import Struct
 
-from src.strings import get_reference, to_camel_case, to_python_types, validate_field
+from src.strings import (
+    get_reference,
+    is_valid_name,
+    to_camel_case,
+    to_python_types,
+    validate_field,
+)
 
 from .array import BaseArrayItem, get_item_from_dict
 
@@ -20,12 +26,37 @@ class BaseField(Struct):
     def __typehint__(self) -> str:
         raise NotImplementedError
 
-    def to_field_class(self):
-        typehint = self.__typehint__
+    def _get_required_field_class(self) -> str:
+        if not self.required:
+            raise ValueError("Field is not required")
+        name_is_valid = is_valid_name(self.name)
+        if not name_is_valid:
+            name = validate_field(self.name)
+            return (
+                f"    {name}: {self.__typehint__} = pydantic.Field(\n"
+                f'        alias="{self.name}"\n'
+                f"    )\n"
+            )
+        return f"    {self.name}: {self.__typehint__}\n"
+
+    def _get_optional_field_class(self) -> str:
         if self.required:
-            string = f"    {self.name}: {typehint}\n"
+            raise ValueError("Field is required")
+        name_is_valid = is_valid_name(self.name)
+        if not name_is_valid:
+            name = validate_field(self.name)
+            return (
+                f"    {name}: typing.Optional[{self.__typehint__}] = pydantic.Field(\n"
+                f'        default=None, alias="{self.name}"\n'
+                f"    )\n"
+            )
+        return f"    {self.name}: typing.Optional[{self.__typehint__}] = None\n"
+
+    def to_field_class(self):
+        if self.required:
+            string = self._get_required_field_class()
         else:
-            string = f"    {self.name}: typing.Optional[{typehint}] = None\n"
+            string = self._get_optional_field_class()
 
         if self.description is not None:
             string += f'    """{self.description}"""\n'
@@ -46,16 +77,28 @@ class ReferenceField(BaseField):
         reference = get_reference(self.reference)
         return reference
 
+    def _get_default_field_class(self) -> str:
+        if self.default is None:
+            raise ValueError("Default value is not defined")
+        name_is_valid = is_valid_name(self.name)
+        # If reference to have default value, then this value is the field of enum
+        default_value = f"{self.__typehint__}.{self.default.upper()}"
+        if not name_is_valid:
+            name = validate_field(self.name)
+            return (
+                f"    {name}: {self.__typehint__} = pydantic.Field(\n"
+                f'        default={default_value}, alias="{self.name}"\n'
+                f"    )\n"
+            )
+        return f"    {self.name}: {self.__typehint__} = {default_value}\n"
+
     def to_field_class(self):
-        typehint = self.__typehint__
         if self.default is not None:
-            # If reference to have default value, then this value is the field of enum
-            default_value = f"{typehint}.{self.default.upper()}"
-            string = f"    {self.name}: {typehint} = {default_value}\n"
+            string = self._get_default_field_class()
         elif self.required:
-            string = f"    {self.name}: {typehint}\n"
+            string = self._get_required_field_class()
         else:
-            string = f"    {self.name}: typing.Optional[{typehint}] = None\n"
+            string = self._get_optional_field_class()
 
         if self.description is not None:
             string += f'    """{self.description}"""\n'
@@ -84,14 +127,26 @@ class IntegerField(BaseField):
     def __typehint__(self) -> str:
         return "int"
 
+    def _get_default_field_class(self) -> str:
+        if self.default is None:
+            raise ValueError("Default value is not defined")
+        name_is_valid = is_valid_name(self.name)
+        if not name_is_valid:
+            name = validate_field(self.name)
+            return (
+                f"    {name}: {self.__typehint__} = pydantic.Field(\n"
+                f'        default={self.default}, alias="{self.name}"\n'
+                f"    )\n"
+            )
+        return f"    {self.name}: {self.__typehint__} = {self.default}\n"
+
     def to_field_class(self):
-        typehint = self.__typehint__
         if self.default is not None:
-            string = f"    {self.name}: {typehint} = {self.default}\n"
+            string = self._get_default_field_class()
         elif self.required:
-            string = f"    {self.name}: {typehint}\n"
+            string = self._get_required_field_class()
         else:
-            string = f"    {self.name}: typing.Optional[{typehint}] = None\n"
+            string = self._get_optional_field_class()
 
         if self.description is not None:
             string += f'    """{self.description}"""\n'
@@ -116,13 +171,27 @@ class BooleanField(BaseField):
     def __typehint__(self) -> str:
         return "bool"
 
+    def _get_default_field_class(self) -> str:
+        if self.default is None:
+            raise ValueError("Default value is not defined")
+        name_is_valid = is_valid_name(self.name)
+        typehint = self.__typehint__
+        if not name_is_valid:
+            name = validate_field(self.name)
+            return (
+                f"    {name}: {typehint} = pydantic.Field(\n"
+                f'        default={self.default}, alias="{self.name}"\n'
+                f"    )\n"
+            )
+        return f"    {self.name}: {typehint} = {self.default}\n"
+
     def to_field_class(self):
         if self.default is not None:
-            string = f"    {self.name}: {self.__typehint__} = {self.default}\n"
+            string = self._get_default_field_class()
         elif self.required:
-            string = f"    {self.name}: {self.__typehint__}\n"
+            string = self._get_required_field_class()
         else:
-            string = f"    {self.name}: typing.Optional[{self.__typehint__}] = None\n"
+            string = self._get_optional_field_class()
 
         if self.description is not None:
             string += f'    """{self.description}"""\n'
@@ -188,7 +257,6 @@ class IntegerEnumField(IntegerField):
 
 
 def get_property_from_dict(object_name: str, item: dict, property_name: str) -> BaseField:
-    property_name = validate_field(property_name)
     if item.get("enum") is not None:
         return _get_enum_property(name=property_name, object_name=object_name, item=item)
     if item.get("$ref") is not None:
