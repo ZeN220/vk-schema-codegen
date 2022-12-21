@@ -1,6 +1,16 @@
 # vk-schema-codegen
 This CLI application needs for generating Python code on base VK API schema.
 
+## Installation
+For installing you need to have installed Python 3.8+. Then you need to install dependencies:
+```bash
+pip install -r requirements/requirements.txt
+```
+Or you can use `poetry`:
+```bash
+poetry install
+```
+
 ## Usage
 Command `python -m src` show help message:
 ```bash
