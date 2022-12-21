@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vk-schema-codegen"
-version = "1.0.0"
+version = "1.0.0a1"
 description = "Code generator for schema of VK API"
 authors = ["ZeN <artaganmalsagov07@gmail.com>"]
 readme = "README.md"
