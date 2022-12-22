@@ -42,6 +42,10 @@ class AllOfSchema(BaseSchema):
         child_classes = ", ".join(references)
 
         class_string = f"class {self.name}({child_classes}):\n"
+        if len(class_string) > 100:
+            child_classes = child_classes.replace(", ", ",\n    ")
+            class_string = f"class {self.name}(\n    {child_classes}\n):\n"
+
         if self.object_schema is None:
             class_string += "    pass\n\n"
             return class_string

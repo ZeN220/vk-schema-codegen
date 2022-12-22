@@ -37,6 +37,26 @@ class TestAllOfSchema:
             "class TestName(Object, AnotherObject):\n" "    id: typing.Optional[int] = None\n\n"
         )
 
+    def test_to_class_long(self):
+        all_of = [
+            {"$ref": "../dir/objects.json#/definitions/VeryLongObjectName"},
+            {"$ref": "../dir/objects.json#/definitions/AnotherVeryLongObjectName"},
+            {"$ref": "../dir/objects.json#/definitions/VeryVeryLongObjectName"},
+            {"$ref": "../dir/objects.json#/definitions/AnotherVeryVeryLongObjectName"},
+            {"properties": {"id": {"type": "integer"}}},
+        ]
+        schema = AllOfSchema.from_dict(name="TestName", all_of=all_of)
+        class_string = schema.to_class()
+        assert class_string == (
+            "class TestName(\n"
+            "    VeryLongObjectName,\n"
+            "    AnotherVeryLongObjectName,\n"
+            "    VeryVeryLongObjectName,\n"
+            "    AnotherVeryVeryLongObjectName\n"
+            "):\n"
+            "    id: typing.Optional[int] = None\n\n"
+        )
+
     def test_to_class_crutch(self):
         all_of = [
             {"$ref": "../wall/objects.json#/definitions/wall_carousel_base"},
