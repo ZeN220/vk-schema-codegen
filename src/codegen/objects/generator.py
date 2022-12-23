@@ -39,14 +39,10 @@ def generate_objects(input_dir: Path, output_dir: Path):
     logger.info("Generating objects...")
     schemas = get_objects(input_dir)
 
-    logger.info("Parsing objects...")
     objects = parse_objects(schemas)
     logger.info("Found %s objects", len(objects))
-    logger.info("Parsing objects finished.")
 
-    logger.info("Generating classes...")
     generate_classes(objects, output_dir)
-    logger.info("Generating classes finished")
 
     end = round(time.time() - start, 3)
     logger.info("Objects generation finished in %s seconds", end)
