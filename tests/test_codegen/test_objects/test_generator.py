@@ -107,6 +107,14 @@ def test_generate_classes(tmp_path: Path):
     )
 
 
+def test_generate_classes_empty(tmp_path: Path):
+    output_path = tmp_path / "path" / "to" / "output"
+    generate_classes([], output_path)
+    objects_file = output_path / "objects.py"
+    assert objects_file.exists()
+    assert objects_file.read_text() == f"{IMPORTS}"
+
+
 def test_generate_objects(tmp_path_factory: pytest.TempPathFactory):
     test_object = {
         "test_object": {"type": "object", "properties": {"test_property": {"type": "string"}}}

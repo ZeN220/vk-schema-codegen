@@ -97,6 +97,8 @@ def generate_classes(objects: list[BaseSchema], output_dir: Path) -> None:
     objects = sorted(objects, key=lambda object_: isinstance(object_, EnumSchema), reverse=True)
     with open(output_dir / "objects.py", "w", encoding="utf-8") as file:
         file.write(IMPORTS)
+        if not objects:
+            return
         for obj in objects[:-1]:
             file.write(obj.to_class() + "\n")
         # Last object without empty line
