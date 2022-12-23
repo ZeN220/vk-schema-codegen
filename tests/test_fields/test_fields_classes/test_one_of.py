@@ -7,7 +7,7 @@ MINIMUM_DATA: dict = {
     "name": "test_name",
     "oneOf": [
         StringField(name="test_name", type="string"),
-        ReferenceField(name="test_name", reference="../dir/objects.json#/definitions/object"),
+        ReferenceField(name="test_name", reference="Object"),
     ],
 }
 TEST_DATA = [

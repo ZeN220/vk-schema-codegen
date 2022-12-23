@@ -74,8 +74,7 @@ class ReferenceField(BaseField):
 
     @property
     def __typehint__(self) -> str:
-        reference = get_reference(self.reference)
-        return reference
+        return self.reference
 
     def _get_default_field_class(self) -> str:
         if self.default is None:
@@ -260,14 +259,17 @@ def get_property_from_dict(object_name: str, item: dict, property_name: str) -> 
     if item.get("enum") is not None:
         return _get_enum_property(name=property_name, object_name=object_name, item=item)
     if item.get("$ref") is not None:
-        reference = item.pop("$ref")
-        return ReferenceField(name=property_name, reference=reference, **item)
+        copy_item = item.copy()
+        ref = copy_item.pop("$ref")
+        reference = get_reference(ref)
+        return ReferenceField(name=property_name, reference=reference, **copy_item)
     if item.get("oneOf") is not None:
-        one_of = item.pop("oneOf")
+        copy_item = item.copy()
+        one_of = copy_item.pop("oneOf")
         # Fields of oneOf are not required a name, but the function requires it.
         # So we add name of oneOf field
         one_of = [get_property_from_dict(object_name, item, property_name) for item in one_of]
-        return OneOfField(name=property_name, oneOf=one_of, **item)
+        return OneOfField(name=property_name, oneOf=one_of, **copy_item)
 
     property_type = item.get("type")
     if isinstance(property_type, list):
@@ -287,8 +289,9 @@ def get_property_from_dict(object_name: str, item: dict, property_name: str) -> 
     if property_type == "string":
         # Some properties with the type "string" may have the field "minimum".
         # I do not know what it is for, so it is simply deleted
-        item.pop("minimum", None)
-        return StringField(name=property_name, **item)
+        copy_item = item.copy()
+        copy_item.pop("minimum", None)
+        return StringField(name=property_name, **copy_item)
     raise ValueError(f"Unknown property type: {property_type}")
 
 

@@ -24,7 +24,7 @@ def test_array_item_not_implemented():
         ({"type": ["string", "integer"]}, UnionArrayItem(type=["string", "integer"])),
         (
             {"$ref": "../dir/objects.json#/definitions/object"},
-            ReferenceArrayItem(reference="../dir/objects.json#/definitions/object"),
+            ReferenceArrayItem(reference="Object"),
         ),
         (
             {"type": "array", "items": {"type": "string"}},

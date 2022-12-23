@@ -45,7 +45,7 @@ MINIMUM_DATA: dict = {"object_name": "TestObject", "property_name": "test_name"}
         ),
         (
             {**MINIMUM_DATA, "item": {"$ref": "../dir/objects.json#/definitions/object"}},
-            ReferenceField(name="test_name", reference="../dir/objects.json#/definitions/object"),
+            ReferenceField(name="test_name", reference="Object"),
         ),
         (
             {**MINIMUM_DATA, "item": {"type": "array", "items": {"type": "string"}}},

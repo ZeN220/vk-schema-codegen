@@ -49,8 +49,7 @@ class ReferenceArrayItem(BaseArrayItem):
 
     @property
     def __typehint__(self) -> str:
-        result = get_reference(self.reference)
-        return result
+        return self.reference
 
 
 class NestedArrayItem(BaseArrayItem):
@@ -64,7 +63,8 @@ class NestedArrayItem(BaseArrayItem):
 
 def get_item_from_dict(item: dict) -> BaseArrayItem:
     if item.get("$ref") is not None:
-        return ReferenceArrayItem(reference=item["$ref"])
+        reference = get_reference(item["$ref"])
+        return ReferenceArrayItem(reference=reference)
 
     item_type = item["type"]
     if isinstance(item_type, list):

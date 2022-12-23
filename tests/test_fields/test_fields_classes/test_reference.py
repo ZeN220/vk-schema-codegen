@@ -2,7 +2,7 @@ import pytest
 
 from src.fields import ReferenceField
 
-MINIMUM_DATA: dict = {"name": "test_name", "reference": "../dir/objects.json#/definitions/object"}
+MINIMUM_DATA: dict = {"name": "test_name", "reference": "Object"}
 TEST_DATA = (
     MINIMUM_DATA,
     {**MINIMUM_DATA, "description": "test_description"},
@@ -39,7 +39,7 @@ class TestReferenceField:
     def test__get_default_field_class_with_alias(self):
         test_data = {
             "name": "global",
-            "reference": "../dir/objects.json#/definitions/object",
+            "reference": "Object",
             "default": "test_default",
         }
         field = ReferenceField(**test_data)

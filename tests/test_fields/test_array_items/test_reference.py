@@ -7,7 +7,7 @@ class TestReferenceArrayItem:
     @pytest.mark.parametrize(
         "data, typehint",
         [
-            ({"reference": "../dir/objects.json#/definitions/object"}, "Object"),
+            ({"reference": "Object"}, "Object"),
         ],
     )
     def test_typehint(self, data: dict, typehint: str):
