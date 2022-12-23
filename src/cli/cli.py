@@ -21,7 +21,7 @@ from .config import Config
     "--input-dir",
     show_default=True,
     default="vk-api-schema",
-    help="Directory with the schemas of API methods",
+    help="Directory with the schemas of the VK API",
     type=click.Path(exists=True, file_okay=False, path_type=Path),
 )
 @click.pass_context
