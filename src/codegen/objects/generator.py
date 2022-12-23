@@ -6,7 +6,7 @@ from pathlib import Path
 
 import msgspec
 
-from src.codegen.objects.schemas import (
+from src.schemas import (
     AllOfSchema,
     ArraySchema,
     BaseSchema,
@@ -16,7 +16,7 @@ from src.codegen.objects.schemas import (
     OneOfSchema,
     ReferenceSchema,
 )
-from src.codegen.objects.schemas.enum import (
+from src.schemas.enum import (
     get_enum_from_dict,
     get_enums_from_all_of,
     get_enums_from_object,

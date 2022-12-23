@@ -10,7 +10,7 @@ from src.codegen.objects.generator import (
     get_objects,
     parse_objects,
 )
-from src.codegen.objects.schemas import (
+from src.schemas import (
     AllOfSchema,
     ArraySchema,
     BoolSchema,
@@ -18,7 +18,7 @@ from src.codegen.objects.schemas import (
     OneOfSchema,
     ReferenceSchema,
 )
-from src.codegen.objects.schemas.enum import get_enum_from_dict
+from src.schemas.enum import get_enum_from_dict
 
 
 def create_objects_file(tmp_path: Path, objects: dict):

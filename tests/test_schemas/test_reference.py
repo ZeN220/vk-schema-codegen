@@ -1,4 +1,4 @@
-from src.codegen.objects.schemas import ReferenceSchema
+from src.schemas import ReferenceSchema
 
 
 class TestReferenceSchema:
@@ -14,4 +14,4 @@ class TestReferenceSchema:
             name="TestName", data={"$ref": "../dir/objects.json#/definitions/object"}
         )
         class_string = schema.to_class()
-        assert class_string == ("class TestName(Object):\n" "    pass\n\n")
+        assert class_string == "class TestName(Object):\n" "    pass\n\n"

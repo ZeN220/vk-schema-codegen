@@ -1,4 +1,4 @@
-from src.codegen.objects.schemas import BoolSchema
+from src.schemas import BoolSchema
 
 
 class TestBoolSchema:

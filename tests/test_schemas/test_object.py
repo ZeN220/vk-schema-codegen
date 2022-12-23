@@ -1,4 +1,4 @@
-from src.codegen.objects.schemas import ObjectSchema
+from src.schemas import ObjectSchema
 
 
 class TestObjectSchema:

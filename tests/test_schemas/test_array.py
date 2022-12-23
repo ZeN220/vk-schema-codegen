@@ -1,5 +1,5 @@
-from src.codegen.objects.schemas import ArraySchema
 from src.fields import StringArrayItem
+from src.schemas import ArraySchema
 
 
 class TestArraySchema:

@@ -1,6 +1,6 @@
 import pytest
 
-from src.codegen.objects.schemas import BaseSchema
+from src.schemas import BaseSchema
 
 
 def test_base_field_not_implemented():

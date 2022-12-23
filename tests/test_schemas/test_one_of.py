@@ -1,4 +1,4 @@
-from src.codegen.objects.schemas.one_of import ElementOneOf, OneOfSchema, ReferenceOneOf
+from src.schemas.one_of import ElementOneOf, OneOfSchema, ReferenceOneOf
 
 
 class TestOneOfSchema:
