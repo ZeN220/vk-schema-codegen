@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from src.strings import to_camel_case, validate_field
