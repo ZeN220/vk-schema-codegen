@@ -321,6 +321,13 @@ class PatternField(BaseField):
 
 
 def get_field_from_dict(item: dict, name: str) -> BaseField:
+    """
+    Some fields have a nested fields, which are not defined names.
+    So, this nested fields have a name of parent field.
+    :param item: field as dict
+    :param name: name of field
+    :return: field as BaseField class
+    """
     if item.get("$ref") is not None:
         copy_item = item.copy()
         ref = copy_item.pop("$ref")
@@ -328,10 +335,8 @@ def get_field_from_dict(item: dict, name: str) -> BaseField:
         return ReferenceField(name=name, reference=reference, **copy_item)
     if item.get("oneOf") is not None:
         copy_item = item.copy()
-        one_of = copy_item.pop("oneOf")
-        # Fields of oneOf are not required a name, but the function requires it.
-        # So we add name of oneOf field
-        one_of = [get_field_from_dict(item, name) for item in one_of]
+        one_of_elements = copy_item.pop("oneOf")
+        one_of = [get_field_from_dict(item, name) for item in one_of_elements]
         return OneOfField(name=name, oneOf=one_of, **copy_item)
     if item.get("patternProperties") is not None:
         copy_item = item.copy()
@@ -346,8 +351,9 @@ def get_field_from_dict(item: dict, name: str) -> BaseField:
         return UnionField(name=name, **item)
     if field_type == "array":
         copy_item = item.copy()
-        copy_item["items"] = get_field_from_dict(copy_item["items"], name)
-        return ArrayField(name=name, **copy_item)
+        array_items = copy_item.pop("items")
+        items = get_field_from_dict(array_items, name)
+        return ArrayField(name=name, items=items, **copy_item)
     if field_type == "object":
         return DictField(name=name, **item)
     if field_type == "integer":
