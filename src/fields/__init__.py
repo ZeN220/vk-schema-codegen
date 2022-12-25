@@ -20,8 +20,8 @@ from .fields import (
     StringEnumField,
     StringField,
     UnionField,
-    get_enum_property_from_dict,
-    get_property_from_dict,
+    get_enum_field_from_dict,
+    get_field_from_dict,
 )
 
 __all__ = [
@@ -37,7 +37,7 @@ __all__ = [
     "OneOfField",
     "StringEnumField",
     "IntegerEnumField",
-    "get_property_from_dict",
+    "get_field_from_dict",
     "BaseArrayItem",
     "IntegerArrayItem",
     "NestedArrayItem",
@@ -45,5 +45,5 @@ __all__ = [
     "StringArrayItem",
     "UnionArrayItem",
     "get_item_from_dict",
-    "get_enum_property_from_dict",
+    "get_enum_field_from_dict",
 ]

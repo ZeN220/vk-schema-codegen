@@ -310,58 +310,55 @@ class PatternField(BaseField):
         return string
 
 
-def get_property_from_dict(item: dict, property_name: str) -> BaseField:
+def get_field_from_dict(item: dict, name: str) -> BaseField:
     if item.get("$ref") is not None:
         copy_item = item.copy()
         ref = copy_item.pop("$ref")
         reference = get_reference(ref)
-        return ReferenceField(name=property_name, reference=reference, **copy_item)
+        return ReferenceField(name=name, reference=reference, **copy_item)
     if item.get("oneOf") is not None:
         copy_item = item.copy()
         one_of = copy_item.pop("oneOf")
         # Fields of oneOf are not required a name, but the function requires it.
         # So we add name of oneOf field
-        one_of = [get_property_from_dict(item, property_name) for item in one_of]
-        return OneOfField(name=property_name, oneOf=one_of, **copy_item)
+        one_of = [get_field_from_dict(item, name) for item in one_of]
+        return OneOfField(name=name, oneOf=one_of, **copy_item)
     if item.get("patternProperties") is not None:
         copy_item = item.copy()
         pattern_properties = copy_item.pop("patternProperties")
         pattern_properties = {
-            key: get_property_from_dict(value, property_name)
-            for key, value in pattern_properties.items()
+            key: get_field_from_dict(value, name) for key, value in pattern_properties.items()
         }
-        return PatternField(name=property_name, patternProperties=pattern_properties, **copy_item)
+        return PatternField(name=name, patternProperties=pattern_properties, **copy_item)
 
-    property_type = item.get("type")
-    if isinstance(property_type, list):
-        return UnionField(name=property_name, **item)
-    if property_type == "array":
+    field_type = item.get("type")
+    if isinstance(field_type, list):
+        return UnionField(name=name, **item)
+    if field_type == "array":
         copy_item = item.copy()
         copy_item["items"] = get_item_from_dict(copy_item["items"])
-        return ArrayField(name=property_name, **copy_item)
-    if property_type == "object":
-        return DictField(name=property_name, **item)
-    if property_type == "integer":
-        return IntegerField(name=property_name, **item)
-    if property_type == "number":
-        return FloatField(name=property_name, **item)
-    if property_type == "boolean":
-        return BooleanField(name=property_name, **item)
-    if property_type == "string":
+        return ArrayField(name=name, **copy_item)
+    if field_type == "object":
+        return DictField(name=name, **item)
+    if field_type == "integer":
+        return IntegerField(name=name, **item)
+    if field_type == "number":
+        return FloatField(name=name, **item)
+    if field_type == "boolean":
+        return BooleanField(name=name, **item)
+    if field_type == "string":
         # Some properties with the type "string" may have the field "minimum".
         # I do not know what it is for, so it is simply deleted
         copy_item = item.copy()
         copy_item.pop("minimum", None)
-        return StringField(name=property_name, **copy_item)
-    raise ValueError(f"Unknown property type: {property_type}")
+        return StringField(name=name, **copy_item)
+    raise ValueError(f"Unknown field type: {field_type}")
 
 
-def get_enum_property_from_dict(
-    item: dict, property_name: str, property_typehint: str
-) -> BaseField:
-    property_type = item["type"]
-    if property_type == "string":
-        return StringEnumField(__typehint__=property_typehint, name=property_name, **item)
-    elif property_type == "integer":
-        return IntegerEnumField(__typehint__=property_typehint, name=property_name, **item)
-    raise ValueError(f"Unknown enum property type: {property_type}")
+def get_enum_field_from_dict(item: dict, name: str, typehint: str) -> BaseField:
+    field_type = item["type"]
+    if field_type == "string":
+        return StringEnumField(name=name, __typehint__=typehint, **item)
+    elif field_type == "integer":
+        return IntegerEnumField(name=name, __typehint__=typehint, **item)
+    raise ValueError(f"Unknown enum field type: {field_type}")
