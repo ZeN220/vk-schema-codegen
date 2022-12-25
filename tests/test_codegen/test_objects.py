@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from src.codegen.objects.generator import (
+from src.codegen.objects import (
     IMPORTS,
     generate_classes,
     generate_objects,
