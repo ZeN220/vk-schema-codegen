@@ -97,14 +97,17 @@ def test_generate_classes(tmp_path: Path):
     test_another_object = ObjectSchema.from_dict(
         "TestAnotherObject", {"test_property": {"type": "string"}}
     )
-    test_objects = [test_object, test_another_object]
     output_path = tmp_path / "path" / "to" / "output"
-    generate_classes(test_objects, output_path)
+    generate_classes([test_object, test_another_object], output_path)
     objects_file = output_path / "objects.py"
     assert objects_file.exists()
+    # fmt: off
     assert objects_file.read_text() == (
-        f"{IMPORTS}" f"{test_object.to_class()}\n" f"{test_another_object.to_class()[:-1]}"
+        f"{IMPORTS}"
+        f"{test_object.to_class()}\n"
+        f"{test_another_object.to_class()[:-1]}"
     )
+    # fmt: on
 
 
 def test_generate_classes_empty(tmp_path: Path):
