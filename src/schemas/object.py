@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from src.fields import BaseField, get_property_from_dict
+from src.fields import BaseField, get_enum_property_from_dict, get_property_from_dict
+from src.strings import to_camel_case
 
 from .base import BaseSchema
 
@@ -12,9 +13,13 @@ class ObjectSchema(BaseSchema):
     def from_dict(cls, name, properties: dict[str, dict]) -> ObjectSchema:
         result = []
         for property_name, property_value in properties.items():
-            obj = get_property_from_dict(
-                object_name=name, item=property_value, property_name=property_name
-            )
+            if property_value.get("enum") is not None:
+                typehint = to_camel_case(f"{name}_{property_name}")
+                obj = get_enum_property_from_dict(
+                    item=property_value, property_name=property_name, property_typehint=typehint
+                )
+            else:
+                obj = get_property_from_dict(item=property_value, property_name=property_name)
             result.append(obj)
         schema = cls(name=name, properties=result)
         return schema

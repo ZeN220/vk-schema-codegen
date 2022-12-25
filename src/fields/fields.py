@@ -4,13 +4,7 @@ from typing import Literal, Optional, Union
 
 from msgspec import Struct
 
-from src.strings import (
-    get_reference,
-    is_valid_name,
-    to_camel_case,
-    to_python_types,
-    validate_field,
-)
+from src.strings import get_reference, is_valid_name, to_python_types, validate_field
 
 from .array import BaseArrayItem, get_item_from_dict
 
@@ -254,10 +248,69 @@ class IntegerEnumField(IntegerField):
     enum: list[int]
     enumNames: list[str]
 
+    def _get_default_enum(self) -> str:
+        """
+        Integer enum can have default value, for getting name of enum
+        we need to get value of enum.
+        :return: name of enum
+        """
+        for enum, enum_name in zip(self.enum, self.enumNames):
+            if enum == self.default:
+                return enum_name
+        raise ValueError("Default value is not defined")
 
-def get_property_from_dict(object_name: str, item: dict, property_name: str) -> BaseField:
-    if item.get("enum") is not None:
-        return _get_enum_property(name=property_name, object_name=object_name, item=item)
+    def _get_default_field_class(self) -> str:
+        if self.default is None:
+            raise ValueError("Default value is not defined")
+        name_is_valid = is_valid_name(self.name)
+        default_value = self._get_default_enum()
+        default = f"{self.__typehint__}.{default_value.upper()}"
+        if not name_is_valid:
+            name = validate_field(self.name)
+            return (
+                f"    {name}: {self.__typehint__} = pydantic.Field(\n"
+                f'        default={default}, alias="{self.name}"\n'
+                f"    )\n"
+            )
+        return f"    {self.name}: {self.__typehint__} = {default}\n"
+
+
+class PatternField(BaseField):
+    type: str = "patternProperties"
+    """
+    This field is missing from original schema for this property,
+    but it is required for parsing.
+    """
+    patternProperties: dict[str, BaseField]
+    additionalProperties: bool
+
+    @property
+    def __typehint__(self) -> str:
+        typehints = [field.__typehint__ for field in self.patternProperties.values()]
+        types = ", ".join(typehints)
+        if len(typehints) == 1:
+            return f"dict[str, {types}]"
+        return f"dict[str, typing.Union[{types}]]"
+
+    def to_field_class(self):
+        if self.required:
+            string = self._get_required_field_class()
+        else:
+            string = self._get_optional_field_class()
+
+        if self.description is not None:
+            string += f'    """\n' f"    {self.description}\n"
+        else:
+            string += '    """\n'
+
+        string += "    Patterns of dict (as regexp) in the form of key-value:\n"
+        for pattern, field in self.patternProperties.items():
+            string += f"    {pattern}: {field.__typehint__}\n"
+        string += '    """\n'
+        return string
+
+
+def get_property_from_dict(item: dict, property_name: str) -> BaseField:
     if item.get("$ref") is not None:
         copy_item = item.copy()
         ref = copy_item.pop("$ref")
@@ -268,8 +321,16 @@ def get_property_from_dict(object_name: str, item: dict, property_name: str) -> 
         one_of = copy_item.pop("oneOf")
         # Fields of oneOf are not required a name, but the function requires it.
         # So we add name of oneOf field
-        one_of = [get_property_from_dict(object_name, item, property_name) for item in one_of]
+        one_of = [get_property_from_dict(item, property_name) for item in one_of]
         return OneOfField(name=property_name, oneOf=one_of, **copy_item)
+    if item.get("patternProperties") is not None:
+        copy_item = item.copy()
+        pattern_properties = copy_item.pop("patternProperties")
+        pattern_properties = {
+            key: get_property_from_dict(value, property_name)
+            for key, value in pattern_properties.items()
+        }
+        return PatternField(name=property_name, patternProperties=pattern_properties, **copy_item)
 
     property_type = item.get("type")
     if isinstance(property_type, list):
@@ -295,10 +356,12 @@ def get_property_from_dict(object_name: str, item: dict, property_name: str) -> 
     raise ValueError(f"Unknown property type: {property_type}")
 
 
-def _get_enum_property(object_name: str, item: dict, name: str) -> BaseField:
+def get_enum_property_from_dict(
+    item: dict, property_name: str, property_typehint: str
+) -> BaseField:
     property_type = item["type"]
-    typehint = to_camel_case(f"{object_name}_{name}")
     if property_type == "string":
-        return StringEnumField(__typehint__=typehint, name=name, **item)
-    else:
-        return IntegerEnumField(__typehint__=typehint, name=name, **item)
+        return StringEnumField(__typehint__=property_typehint, name=property_name, **item)
+    elif property_type == "integer":
+        return IntegerEnumField(__typehint__=property_typehint, name=property_name, **item)
+    raise ValueError(f"Unknown enum property type: {property_type}")
