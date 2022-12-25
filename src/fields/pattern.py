@@ -4,11 +4,7 @@ from .base import BaseField
 
 
 class PatternField(BaseField):
-    type: str = "patternProperties"
-    """
-    This field is missing from original schema for this property,
-    but it is required for parsing.
-    """
+    type: str
     patternProperties: dict[str, BaseField]
     additionalProperties: bool
 
