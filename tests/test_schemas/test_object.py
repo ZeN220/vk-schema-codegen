@@ -1,3 +1,4 @@
+from src.fields import IntegerField, StringEnumField
 from src.schemas import ObjectSchema
 
 
@@ -5,15 +6,20 @@ class TestObjectSchema:
     def test_from_dict(self):
         properties = {
             "id": {"type": "integer"},
-            "name": {"type": "string"},
+            "enum_property": {"enum": ["value1", "value2"], "type": "string"},
         }
         schema = ObjectSchema.from_dict(name="TestName", properties=properties)
+
         assert schema.name == "TestName"
         assert len(schema.properties) == 2
+
         assert schema.properties[0].name == "id"
         assert schema.properties[0].type == "integer"
-        assert schema.properties[1].name == "name"
+        assert isinstance(schema.properties[0], IntegerField)
+
+        assert schema.properties[1].name == "enum_property"
         assert schema.properties[1].type == "string"
+        assert isinstance(schema.properties[1], StringEnumField)
 
     def test_to_class(self):
         properties = {
