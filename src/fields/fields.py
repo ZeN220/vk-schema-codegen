@@ -205,6 +205,18 @@ class ArrayField(BaseField):
     def __typehint__(self) -> str:
         return f"list[{self.items.__typehint__}]"
 
+    def to_field_class(self):
+        if self.required:
+            string = self._get_required_field_class()
+        else:
+            string = self._get_optional_field_class()
+
+        if self.items.description is not None:
+            string += f'    """{self.items.description}"""\n'
+        elif self.description is not None:
+            string += f'    """{self.description}"""\n'
+        return string
+
 
 class UnionField(BaseField):
     type: list[str]
