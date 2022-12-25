@@ -5,7 +5,7 @@ from src.fields import BooleanField
 MINIMUM_DATA: dict = {"name": "test_name", "type": "boolean"}
 TEST_DATA = [
     MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "test_description"},
+    {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
     {**MINIMUM_DATA, "default": True},
 ]
@@ -19,7 +19,7 @@ class TestBooleanField:
                 TEST_DATA,
                 [
                     "    test_name: typing.Optional[bool] = None\n",
-                    '    test_name: typing.Optional[bool] = None\n    """test_description"""\n',
+                    '    test_name: typing.Optional[bool] = None\n    """Test description"""\n',
                     "    test_name: bool\n",
                     "    test_name: bool = True\n",
                 ],

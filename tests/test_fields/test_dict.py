@@ -5,7 +5,7 @@ from src.fields import DictField
 MINIMUM_DATA: dict = {"name": "test_name", "type": "dict"}
 TEST_DATA = [
     MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "test_description"},
+    {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
 ]
 
@@ -18,7 +18,7 @@ class TestDictField:
                 TEST_DATA,
                 [
                     "    test_name: typing.Optional[dict] = None\n",
-                    '    test_name: typing.Optional[dict] = None\n    """test_description"""\n',
+                    '    test_name: typing.Optional[dict] = None\n    """Test description"""\n',
                     "    test_name: dict\n",
                 ],
             )

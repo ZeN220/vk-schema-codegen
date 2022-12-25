@@ -10,7 +10,7 @@ MINIMUM_DATA: dict = {
 }
 TEST_DATA = [
     MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "test_description"},
+    {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
     {**MINIMUM_DATA, "enumNames": ["test_name"]},
 ]
@@ -27,7 +27,7 @@ class TestStringEnumProperty:
                     # Very long line
                     (
                         "    test_name: typing.Optional[ObjectTestName] = None\n"
-                        '    """test_description"""\n'
+                        '    """Test description"""\n'
                     ),
                     "    test_name: ObjectTestName\n",
                     "    test_name: typing.Optional[ObjectTestName] = None\n",

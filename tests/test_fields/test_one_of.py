@@ -12,7 +12,7 @@ MINIMUM_DATA: dict = {
 }
 TEST_DATA = [
     MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "test_description"},
+    {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
 ]
 
@@ -27,7 +27,7 @@ class TestOneOfField:
                     "    test_name: typing.Optional[typing.Union[str, Object]] = None\n",
                     # Very long line
                     "    test_name: typing.Optional[typing.Union[str, Object]] = None\n    "
-                    '"""test_description"""\n',
+                    '"""Test description"""\n',
                     "    test_name: typing.Union[str, Object]\n",
                 ],
             )

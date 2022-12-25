@@ -5,7 +5,7 @@ from src.fields import FloatField
 MINIMUM_DATA: dict = {"name": "test_name", "type": "float"}
 TEST_DATA = (
     MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "test_description"},
+    {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
     {**MINIMUM_DATA, "minimum": 1.0},
     {**MINIMUM_DATA, "minimum": 1},
@@ -21,7 +21,7 @@ class TestFloatField:
                 TEST_DATA,
                 [
                     "    test_name: typing.Optional[float] = None\n",
-                    '    test_name: typing.Optional[float] = None\n    """test_description"""\n',
+                    '    test_name: typing.Optional[float] = None\n    """Test description"""\n',
                     "    test_name: float\n",
                     "    test_name: typing.Optional[float] = None\n",
                     "    test_name: typing.Optional[float] = None\n",

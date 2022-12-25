@@ -5,7 +5,7 @@ from src.fields import IntegerField
 MINIMUM_DATA: dict = {"name": "test_name", "type": "integer"}
 TEST_DATA = (
     MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "test_description"},
+    {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
     {**MINIMUM_DATA, "default": 1},
     {**MINIMUM_DATA, "minimum": 1},
@@ -23,7 +23,7 @@ class TestIntegerField:
                 TEST_DATA,
                 [
                     "    test_name: typing.Optional[int] = None\n",
-                    '    test_name: typing.Optional[int] = None\n    """test_description"""\n',
+                    '    test_name: typing.Optional[int] = None\n    """Test description"""\n',
                     "    test_name: int\n",
                     "    test_name: int = 1\n",
                     "    test_name: typing.Optional[int] = None\n",

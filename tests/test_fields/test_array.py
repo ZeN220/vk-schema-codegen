@@ -10,7 +10,7 @@ MINIMUM_DATA: dict = {
 }
 TEST_DATA = [
     MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "test_description"},
+    {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
 ]
 
@@ -26,7 +26,7 @@ class TestArrayField:
                     # Very long line
                     (
                         "    test_name: typing.Optional[list[dict]] = None\n"
-                        '    """test_description"""\n'
+                        '    """Test description"""\n'
                     ),
                     "    test_name: list[dict]\n",
                 ],

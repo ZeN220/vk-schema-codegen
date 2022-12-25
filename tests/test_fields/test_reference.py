@@ -5,7 +5,7 @@ from src.fields import ReferenceField
 MINIMUM_DATA: dict = {"name": "test_name", "reference": "Object"}
 TEST_DATA = (
     MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "test_description"},
+    {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
     {**MINIMUM_DATA, "default": "test_default"},
 )
@@ -19,7 +19,7 @@ class TestReferenceField:
                 TEST_DATA,
                 [
                     "    test_name: typing.Optional[Object] = None\n",
-                    '    test_name: typing.Optional[Object] = None\n    """test_description"""\n',
+                    '    test_name: typing.Optional[Object] = None\n    """Test description"""\n',
                     "    test_name: Object\n",
                     "    test_name: Object = Object.TEST_DEFAULT\n",
                 ],

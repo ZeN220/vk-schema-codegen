@@ -5,7 +5,7 @@ from src.fields import UnionField
 MINIMUM_DATA: dict = {"name": "test_name", "type": ["string", "integer"]}
 TEST_DATA = [
     MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "test_description"},
+    {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
 ]
 
@@ -20,7 +20,7 @@ class TestUnionField:
                     "    test_name: typing.Optional[typing.Union[str, int]] = None\n",
                     # Very long line
                     "    test_name: typing.Optional[typing.Union[str, int]] = None\n    "
-                    '"""test_description"""\n',
+                    '"""Test description"""\n',
                     "    test_name: typing.Union[str, int]\n",
                 ],
             )
