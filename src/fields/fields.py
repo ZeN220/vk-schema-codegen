@@ -6,8 +6,6 @@ from msgspec import Struct
 
 from src.strings import get_reference, is_valid_name, to_python_types, validate_field
 
-from .array import BaseArrayItem, get_item_from_dict
-
 
 class BaseField(Struct):
     type: Union[str, list]
@@ -201,7 +199,7 @@ class DictField(BaseField):
 
 class ArrayField(BaseField):
     type: str
-    items: BaseArrayItem
+    items: BaseField
 
     @property
     def __typehint__(self) -> str:
@@ -336,7 +334,7 @@ def get_field_from_dict(item: dict, name: str) -> BaseField:
         return UnionField(name=name, **item)
     if field_type == "array":
         copy_item = item.copy()
-        copy_item["items"] = get_item_from_dict(copy_item["items"])
+        copy_item["items"] = get_field_from_dict(copy_item["items"], name)
         return ArrayField(name=name, **copy_item)
     if field_type == "object":
         return DictField(name=name, **item)

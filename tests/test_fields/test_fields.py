@@ -10,7 +10,6 @@ from src.fields import (
     IntegerField,
     OneOfField,
     ReferenceField,
-    StringArrayItem,
     StringEnumField,
     StringField,
     UnionField,
@@ -49,8 +48,10 @@ MINIMUM_DATA: dict = {"name": "test_name"}
             ReferenceField(name="test_name", reference="Object"),
         ),
         (
-            {**MINIMUM_DATA, "item": {"type": "array", "items": {"type": "string"}}},
-            ArrayField(name="test_name", type="array", items=StringArrayItem(type="string")),
+            {**MINIMUM_DATA, "item": {"type": "array", "items": {"type": "object"}}},
+            ArrayField(
+                name="test_name", type="array", items=DictField(name="test_name", type="object")
+            ),
         ),
         (
             {**MINIMUM_DATA, "item": {"type": ["string", "integer"]}},
