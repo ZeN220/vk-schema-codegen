@@ -12,6 +12,10 @@ TEST_DATA = [
     MINIMUM_DATA,
     {**MINIMUM_DATA, "description": "Test description"},
     {**MINIMUM_DATA, "required": True},
+    {
+        **MINIMUM_DATA,
+        "items": DictField(name="test_name", type="dict", description="Item description"),
+    },
 ]
 
 
@@ -29,6 +33,8 @@ class TestArrayField:
                         '    """Test description"""\n'
                     ),
                     "    test_name: list[dict]\n",
+                    "    test_name: typing.Optional[list[dict]] = None\n"
+                    '    """Item description"""\n',
                 ],
             )
         ),

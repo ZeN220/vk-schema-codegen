@@ -9,6 +9,7 @@ from src.fields import (
     IntegerEnumField,
     IntegerField,
     OneOfField,
+    PatternField,
     ReferenceField,
     StringEnumField,
     StringField,
@@ -65,6 +66,22 @@ MINIMUM_DATA: dict = {"name": "test_name"}
                     StringField(name="test_name", type="string"),
                     IntegerField(name="test_name", type="integer"),
                 ],
+            ),
+        ),
+        (
+            {
+                **MINIMUM_DATA,
+                "item": {
+                    "type": "object",
+                    "patternProperties": {"this_is_regexp": {"type": "string"}},
+                    "additionalProperties": False,
+                },
+            },
+            PatternField(
+                type="object",
+                name="test_name",
+                patternProperties={"this_is_regexp": StringField(name="test_name", type="string")},
+                additionalProperties=False,
             ),
         ),
     ],
