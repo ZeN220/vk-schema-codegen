@@ -10,28 +10,20 @@ MINIMUM_DATA: dict = {
         ReferenceField(name="test_name", reference="Object"),
     ],
 }
-TEST_DATA = [
-    MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "Test description"},
-    {**MINIMUM_DATA, "required": True},
-]
 
 
 class TestOneOfField:
     @pytest.mark.parametrize(
         "data, expected",
-        list(
-            zip(
-                TEST_DATA,
-                [
-                    "    test_name: typing.Optional[typing.Union[str, Object]] = None\n",
-                    # Very long line
-                    "    test_name: typing.Optional[typing.Union[str, Object]] = None\n    "
-                    '"""Test description"""\n',
-                    "    test_name: typing.Union[str, Object]\n",
-                ],
-            )
-        ),
+        [
+            (MINIMUM_DATA, "    test_name: typing.Optional[typing.Union[str, Object]] = None\n"),
+            ({**MINIMUM_DATA, "required": True}, "    test_name: typing.Union[str, Object]\n"),
+            (
+                {**MINIMUM_DATA, "description": "Test description"},
+                "    test_name: typing.Optional[typing.Union[str, Object]] = None\n    "
+                '"""Test description"""\n',
+            ),
+        ],
     )
     def test_to_field_class(self, data: dict, expected: str):
         field = OneOfField(**data)

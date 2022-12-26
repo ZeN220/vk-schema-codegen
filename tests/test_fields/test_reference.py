@@ -3,28 +3,23 @@ import pytest
 from src.fields import ReferenceField
 
 MINIMUM_DATA: dict = {"name": "test_name", "reference": "Object"}
-TEST_DATA = (
-    MINIMUM_DATA,
-    {**MINIMUM_DATA, "description": "Test description"},
-    {**MINIMUM_DATA, "required": True},
-    {**MINIMUM_DATA, "default": "test_default"},
-)
 
 
 class TestReferenceField:
     @pytest.mark.parametrize(
         "data, expected",
-        list(
-            zip(
-                TEST_DATA,
-                [
-                    "    test_name: typing.Optional[Object] = None\n",
-                    '    test_name: typing.Optional[Object] = None\n    """Test description"""\n',
-                    "    test_name: Object\n",
-                    "    test_name: Object = Object.TEST_DEFAULT\n",
-                ],
-            )
-        ),
+        [
+            (MINIMUM_DATA, "    test_name: typing.Optional[Object] = None\n"),
+            ({**MINIMUM_DATA, "required": True}, "    test_name: Object\n"),
+            (
+                {**MINIMUM_DATA, "default": "test_default"},
+                "    test_name: Object = Object.TEST_DEFAULT\n",
+            ),
+            (
+                {**MINIMUM_DATA, "description": "Test description"},
+                '    test_name: typing.Optional[Object] = None\n    """Test description"""\n',
+            ),
+        ],
     )
     def test_to_field_class(self, data: dict, expected: str):
         field = ReferenceField(**data)

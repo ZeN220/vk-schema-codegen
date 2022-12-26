@@ -19,21 +19,19 @@ TEST_DATA = [
 class TestStringEnumProperty:
     @pytest.mark.parametrize(
         "data, expected",
-        list(
-            zip(
-                TEST_DATA,
-                [
-                    "    test_name: typing.Optional[ObjectTestName] = None\n",
-                    # Very long line
-                    (
-                        "    test_name: typing.Optional[ObjectTestName] = None\n"
-                        '    """Test description"""\n'
-                    ),
-                    "    test_name: ObjectTestName\n",
-                    "    test_name: typing.Optional[ObjectTestName] = None\n",
-                ],
-            )
-        ),
+        [
+            (MINIMUM_DATA, "    test_name: typing.Optional[ObjectTestName] = None\n"),
+            ({**MINIMUM_DATA, "required": True}, "    test_name: ObjectTestName\n"),
+            (
+                {**MINIMUM_DATA, "enumNames": ["test_name"]},
+                "    test_name: typing.Optional[ObjectTestName] = None\n",
+            ),
+            (
+                {**MINIMUM_DATA, "description": "Test description"},
+                "    test_name: typing.Optional[ObjectTestName] = None\n"
+                '    """Test description"""\n',
+            ),
+        ],
     )
     def test_to_field_class(self, data: dict, expected: str):
         field = StringEnumField(**data)
