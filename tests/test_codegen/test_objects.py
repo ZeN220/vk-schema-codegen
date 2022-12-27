@@ -32,27 +32,16 @@ def test_get_objects(tmp_path_factory: pytest.TempPathFactory):
     test_object = {
         "test_object": {"type": "object", "properties": {"test_property": {"type": "string"}}}
     }
-    test_another_object = {
-        "test_another_object": {
-            "type": "object",
-            "properties": {"test_another_property": {"type": "string"}},
-        }
-    }
 
-    # Create a temporary directories
-    # of the form /data/section/objects.json & /data/another_section/objects.json
+    # Create a temporary directories of the form /data/section/objects.json
     objects_path = tmp_path_factory.mktemp("data")
     section_path = objects_path / "section"
-    another_section_path = objects_path / "another_section"
     path_without_objects = objects_path / "without_objects"
     section_path.mkdir()
-    another_section_path.mkdir()
     path_without_objects.mkdir()
 
     create_objects_file(section_path, test_object)
-    create_objects_file(another_section_path, test_another_object)
-
-    assert get_objects(objects_path) == {**test_object, **test_another_object}
+    assert get_objects(objects_path) == test_object
 
 
 def test_parse_objects():
