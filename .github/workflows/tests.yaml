@@ -1,11 +1,20 @@
 name: Python Tests
 
 on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - ".github/workflows/tests.yaml"
+      - "pyproject.toml"
+      - "poetry.lock"
   push:
     paths:
       - "src/**"
       - "tests/**"
       - ".github/workflows/tests.yaml"
+      - "pyproject.toml"
+      - "poetry.lock"
 
 jobs:
   tests:
