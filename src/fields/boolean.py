@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from src.strings import is_valid_name, validate_field
 
@@ -7,7 +7,7 @@ from .base import BaseField
 
 class BooleanField(BaseField):
     type: str
-    default: Optional[bool] = None
+    default: Optional[Union[bool, int]] = None
 
     @property
     def __typehint__(self) -> str:
@@ -18,14 +18,15 @@ class BooleanField(BaseField):
             raise ValueError("Default value is not defined")
         name_is_valid = is_valid_name(self.name)
         typehint = self.__typehint__
+        default = bool(self.default)
         if not name_is_valid:
             name = validate_field(self.name)
             return (
                 f"    {name}: {typehint} = pydantic.Field(\n"
-                f'        default={self.default}, alias="{self.name}"\n'
+                f'        default={default}, alias="{self.name}"\n'
                 f"    )\n"
             )
-        return f"    {self.name}: {typehint} = {self.default}\n"
+        return f"    {self.name}: {typehint} = {default}\n"
 
     def to_field_class(self):
         if self.default is not None:

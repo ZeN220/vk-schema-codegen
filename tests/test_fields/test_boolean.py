@@ -12,6 +12,7 @@ class TestBooleanField:
             (MINIMUM_DATA, "    test_name: typing.Optional[bool] = None\n"),
             ({**MINIMUM_DATA, "required": True}, "    test_name: bool\n"),
             ({**MINIMUM_DATA, "default": True}, "    test_name: bool = True\n"),
+            ({**MINIMUM_DATA, "default": 1}, "    test_name: bool = True\n"),
             (
                 {**MINIMUM_DATA, "description": "Test description"},
                 '    test_name: typing.Optional[bool] = None\n    """Test description"""\n',
