@@ -1,7 +1,7 @@
 import click
 
 from src.cli.config import Config
-from src.parsers import generate_objects
+from src.codegen import generate_objects
 
 
 @click.command("objects", help="Generate objects from API schema")

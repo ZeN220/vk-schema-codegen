@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from src.strings.converter import to_camel_case, to_python_type, to_python_types

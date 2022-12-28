@@ -1,41 +1,36 @@
 import pytest
 
-from src.fields import (
-    BaseArrayItem,
-    IntegerArrayItem,
-    NestedArrayItem,
-    ReferenceArrayItem,
-    StringArrayItem,
-    UnionArrayItem,
-    get_item_from_dict,
-)
+from src.fields import ArrayField, DictField
+
+# For testing, need to create a fake class to use as the items class
+MINIMUM_DATA: dict = {
+    "name": "test_name",
+    "type": "array",
+    "items": DictField(name="test_name", type="dict"),
+}
 
 
-def test_array_item_not_implemented():
-    with pytest.raises(NotImplementedError):
-        BaseArrayItem().__typehint__  # noqa
-
-
-@pytest.mark.parametrize(
-    "arguments, expected",
-    [
-        ({"type": "string"}, StringArrayItem(type="string")),
-        ({"type": "integer"}, IntegerArrayItem(type="integer")),
-        ({"type": ["string", "integer"]}, UnionArrayItem(type=["string", "integer"])),
-        (
-            {"$ref": "../dir/objects.json#/definitions/object"},
-            ReferenceArrayItem(reference="../dir/objects.json#/definitions/object"),
-        ),
-        (
-            {"type": "array", "items": {"type": "string"}},
-            NestedArrayItem(type="array", items=StringArrayItem(type="string")),
-        ),
-    ],
-)
-def test_get_item_from_dict(arguments: dict, expected: BaseArrayItem):
-    assert get_item_from_dict(arguments) == expected
-
-
-def test_get_item_from_dict_unknown_type():
-    with pytest.raises(ValueError):
-        get_item_from_dict({"type": "unknown"})
+class TestArrayField:
+    @pytest.mark.parametrize(
+        "data, expected",
+        [
+            (MINIMUM_DATA, "    test_name: typing.Optional[list[dict]] = None\n"),
+            ({**MINIMUM_DATA, "required": True}, "    test_name: list[dict]\n"),
+            (
+                {**MINIMUM_DATA, "description": "Test description"},
+                '    test_name: typing.Optional[list[dict]] = None\n    """Test description"""\n',
+            ),
+            (
+                {
+                    **MINIMUM_DATA,
+                    "items": DictField(
+                        name="test_name", type="dict", description="Item description"
+                    ),
+                },
+                '    test_name: typing.Optional[list[dict]] = None\n    """Item description"""\n',
+            ),
+        ],
+    )
+    def test_to_field_class(self, data: dict, expected: str):
+        field = ArrayField(**data)
+        assert field.to_field_class() == expected

@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def to_camel_case(snake_str: str) -> str:
     result = str()
     for word in snake_str.split("_"):

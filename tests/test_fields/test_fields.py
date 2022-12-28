@@ -9,15 +9,16 @@ from src.fields import (
     IntegerEnumField,
     IntegerField,
     OneOfField,
+    PatternField,
     ReferenceField,
-    StringArrayItem,
     StringEnumField,
     StringField,
     UnionField,
-    get_property_from_dict,
+    get_enum_field_from_dict,
+    get_field_from_dict,
 )
 
-MINIMUM_DATA: dict = {"object_name": "TestObject", "property_name": "test_name"}
+MINIMUM_DATA: dict = {"name": "test_name"}
 
 
 @pytest.mark.parametrize(
@@ -45,11 +46,13 @@ MINIMUM_DATA: dict = {"object_name": "TestObject", "property_name": "test_name"}
         ),
         (
             {**MINIMUM_DATA, "item": {"$ref": "../dir/objects.json#/definitions/object"}},
-            ReferenceField(name="test_name", reference="../dir/objects.json#/definitions/object"),
+            ReferenceField(name="test_name", reference="Object"),
         ),
         (
-            {**MINIMUM_DATA, "item": {"type": "array", "items": {"type": "string"}}},
-            ArrayField(name="test_name", type="array", items=StringArrayItem(type="string")),
+            {**MINIMUM_DATA, "item": {"type": "array", "items": {"type": "object"}}},
+            ArrayField(
+                name="test_name", type="array", items=DictField(name="test_name", type="object")
+            ),
         ),
         (
             {**MINIMUM_DATA, "item": {"type": ["string", "integer"]}},
@@ -66,9 +69,43 @@ MINIMUM_DATA: dict = {"object_name": "TestObject", "property_name": "test_name"}
             ),
         ),
         (
-            {**MINIMUM_DATA, "item": {"type": "string", "enum": ["a", "b", "c"]}},
+            {
+                **MINIMUM_DATA,
+                "item": {
+                    "type": "object",
+                    "patternProperties": {"this_is_regexp": {"type": "string"}},
+                    "additionalProperties": False,
+                },
+            },
+            PatternField(
+                type="object",
+                name="test_name",
+                patternProperties={"this_is_regexp": StringField(name="test_name", type="string")},
+                additionalProperties=False,
+            ),
+        ),
+    ],
+)
+def test_get_field_from_dict(arguments: dict, expected: BaseField):
+    assert get_field_from_dict(**arguments) == expected
+
+
+def test_get_field_from_dict_unknown():
+    with pytest.raises(ValueError):
+        get_field_from_dict(item={"type": "unknown"}, **MINIMUM_DATA)
+
+
+@pytest.mark.parametrize(
+    "arguments, expected",
+    [
+        (
+            {
+                **MINIMUM_DATA,
+                "item": {"type": "string", "enum": ["a", "b", "c"]},
+                "typehint": "TestTypeHint",
+            },
             StringEnumField(
-                __typehint__="TestObjectTestName",
+                __typehint__="TestTypeHint",
                 name="test_name",
                 type="string",
                 enum=["a", "b", "c"],
@@ -78,9 +115,10 @@ MINIMUM_DATA: dict = {"object_name": "TestObject", "property_name": "test_name"}
             {
                 **MINIMUM_DATA,
                 "item": {"type": "integer", "enum": [1, 2, 3], "enumNames": ["a", "b", "c"]},
+                "typehint": "TestTypeHint",
             },
             IntegerEnumField(
-                __typehint__="TestObjectTestName",
+                __typehint__="TestTypeHint",
                 name="test_name",
                 type="integer",
                 enum=[1, 2, 3],
@@ -89,10 +127,12 @@ MINIMUM_DATA: dict = {"object_name": "TestObject", "property_name": "test_name"}
         ),
     ],
 )
-def test_get_property_from_dict(arguments: dict, expected: BaseField):
-    assert get_property_from_dict(**arguments) == expected
+def test_get_enum_field_from_dict(arguments: dict, expected: BaseField):
+    assert get_enum_field_from_dict(**arguments) == expected
 
 
-def test_get_property_from_dict_raises():
+def test_get_enum_field_from_dict_unknown():
     with pytest.raises(ValueError):
-        get_property_from_dict(**MINIMUM_DATA, item={"type": "invalid"})
+        get_enum_field_from_dict(
+            item={"type": "unknown"}, name="test_name", typehint="TestTypeHint"
+        )

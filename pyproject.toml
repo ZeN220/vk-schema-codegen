@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vk-schema-codegen"
-version = "1.0.0a1"
+version = "1.0.0a2"
 description = "Code generator for schema of VK API"
 authors = ["ZeN <artaganmalsagov07@gmail.com>"]
 readme = "README.md"
@@ -14,9 +14,10 @@ msgspec = "^0.10.1"
 pre-commit = "^2.20.0"
 black = "^22.12.0"
 flake8 = "^5.0.4"
-isort = "^5.11.3"
+isort = "^5.11.4"
 mypy = "^0.991"
 pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -32,4 +33,12 @@ line_length = 88
 
 [tool.black]
 line-length = 99
-target-version = ['py38', 'py39', 'py310']
+target-version = ["py38", "py39", "py310", "py311"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "if __name__ == .__main__.:"
+]
+omit = [
+    "src/__main__.py"
+]
