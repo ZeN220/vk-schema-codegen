@@ -6,6 +6,7 @@ from .enum import EnumSchema
 from .object import ObjectSchema
 from .one_of import OneOfSchema
 from .reference import ReferenceSchema
+from .response import ResponseSchema
 
 __all__ = [
     "BaseSchema",
@@ -16,4 +17,5 @@ __all__ = [
     "ReferenceSchema",
     "BoolSchema",
     "OneOfSchema",
+    "ResponseSchema",
 ]
