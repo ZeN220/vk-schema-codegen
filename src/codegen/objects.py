@@ -99,8 +99,8 @@ def generate_classes(objects: list[BaseSchema], output_dir: Path) -> None:
         file.write(IMPORTS)
         if not objects:
             return
-        for obj in objects[:-1]:
-            file.write(obj.to_class() + "\n")
-        # Last object without extra line
-        last_object = objects[-1]
-        file.write(last_object.to_class()[:-1])
+        classes = ""
+        for obj in objects:
+            classes += obj.to_class() + "\n"
+        # classes[:-2] - remove last 2 new lines
+        file.write(classes[:-2])
