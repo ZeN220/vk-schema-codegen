@@ -56,3 +56,47 @@ class TestBaseField:
         field = field_class(name="test_name", type="string", required=True)
         with pytest.raises(ValueError):
             field._get_optional_field_class()
+
+    def test__get_description(self):
+        field_class = get_implemented_class()
+        field = field_class(name="test_name", type="string", description="Test description")
+        assert field._get_description() == {"description": "Test description"}
+
+    def test__get_description_empty(self):
+        field_class = get_implemented_class()
+        field = field_class(name="test_name", type="string")
+        assert field._get_description() == {}
+
+    def test__get_description_field_class(self):
+        class DescriptionClass(BaseField):
+            @property
+            def __typehint__(self) -> str:
+                return "str"
+
+            def _get_description(self) -> dict:
+                return {"description": "Test description", "another": "Test another"}
+
+        field = DescriptionClass(name="test_name", type="string")
+        assert field._get_description_field_class() == (
+            '    """\n    Test description\n    another: Test another\n    """\n'
+        )
+
+    def test__get_description_field_class_only_description(self):
+        field_class = get_implemented_class()
+        field = field_class(name="test_name", type="string", description="Test description")
+        assert field._get_description_field_class() == '    """Test description"""\n'
+
+    def test__get_description_field_class_empty(self):
+        field_class = get_implemented_class()
+        field = field_class(name="test_name", type="string")
+        assert field._get_description_field_class() == ""
+
+    def test_to_field_class_required(self):
+        field_class = get_implemented_class()
+        field = field_class(name="test_name", type="string", required=True)
+        assert field.to_field_class() == "    test_name: str\n"
+
+    def test_to_field_class_no_required(self):
+        field_class = get_implemented_class()
+        field = field_class(name="test_name", type="string")
+        assert field.to_field_class() == "    test_name: typing.Optional[str] = None\n"

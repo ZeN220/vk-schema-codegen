@@ -12,10 +12,26 @@ class TestIntegerField:
             (MINIMUM_DATA, "    test_name: typing.Optional[int] = None\n"),
             ({**MINIMUM_DATA, "required": True}, "    test_name: int\n"),
             ({**MINIMUM_DATA, "default": 1}, "    test_name: int = 1\n"),
-            ({**MINIMUM_DATA, "minimum": 1}, "    test_name: typing.Optional[int] = None\n"),
-            ({**MINIMUM_DATA, "maximum": 1}, "    test_name: typing.Optional[int] = None\n"),
-            ({**MINIMUM_DATA, "entity": "owner"}, "    test_name: typing.Optional[int] = None\n"),
-            ({**MINIMUM_DATA, "format": "int64"}, "    test_name: typing.Optional[int] = None\n"),
+            (
+                {**MINIMUM_DATA, "minimum": 1},
+                "    test_name: typing.Optional[int] = None\n"
+                '    """\n    Minimum value: 1\n    """\n',
+            ),
+            (
+                {**MINIMUM_DATA, "maximum": 1},
+                "    test_name: typing.Optional[int] = None\n"
+                '    """\n    Maximum value: 1\n    """\n',
+            ),
+            (
+                {**MINIMUM_DATA, "entity": "owner"},
+                "    test_name: typing.Optional[int] = None\n"
+                '    """\n    Entity: owner\n    """\n',
+            ),
+            (
+                {**MINIMUM_DATA, "format": "int64"},
+                "    test_name: typing.Optional[int] = None\n"
+                '    """\n    Format: int64\n    """\n',
+            ),
             (
                 {**MINIMUM_DATA, "description": "Test description"},
                 '    test_name: typing.Optional[int] = None\n    """Test description"""\n',

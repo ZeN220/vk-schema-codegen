@@ -11,9 +11,21 @@ class TestFloatField:
         [
             (MINIMUM_DATA, "    test_name: typing.Optional[float] = None\n"),
             ({**MINIMUM_DATA, "required": True}, "    test_name: float\n"),
-            ({**MINIMUM_DATA, "minimum": 1.0}, "    test_name: typing.Optional[float] = None\n"),
-            ({**MINIMUM_DATA, "minimum": 1}, "    test_name: typing.Optional[float] = None\n"),
-            ({**MINIMUM_DATA, "maximum": 1}, "    test_name: typing.Optional[float] = None\n"),
+            (
+                {**MINIMUM_DATA, "minimum": 1.0},
+                "    test_name: typing.Optional[float] = None\n"
+                '    """\n    Minimum value: 1.0\n    """\n',
+            ),
+            (
+                {**MINIMUM_DATA, "minimum": 1},
+                "    test_name: typing.Optional[float] = None\n"
+                '    """\n    Minimum value: 1\n    """\n',
+            ),
+            (
+                {**MINIMUM_DATA, "maximum": 1},
+                "    test_name: typing.Optional[float] = None\n"
+                '    """\n    Maximum value: 1\n    """\n',
+            ),
             (
                 {**MINIMUM_DATA, "description": "Test description"},
                 '    test_name: typing.Optional[float] = None\n    """Test description"""\n',

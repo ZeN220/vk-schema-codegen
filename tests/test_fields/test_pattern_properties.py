@@ -10,28 +10,26 @@ MINIMUM_DATA: dict = {
     "additionalProperties": False,
 }
 
-DEFAULT_DESCRIPTION = (
-    "\n    Patterns of dict (as regexp) in the form of key-value:\n    this_is_regexp: str\n"
-)
+DEFAULT_DESCRIPTION = "\n    Patterns of dict keys (as regexp): this_is_regexp"
 
 
-class TestPatterField:
+class TestPatternField:
     @pytest.mark.parametrize(
         "data, expected",
         [
             (
                 MINIMUM_DATA,
                 f"    test_name: typing.Optional[dict[str, str]] = None\n"
-                f'    """{DEFAULT_DESCRIPTION}    """\n',
+                f'    """{DEFAULT_DESCRIPTION}\n    """\n',
             ),
             (
                 {**MINIMUM_DATA, "required": True},
-                f"    test_name: dict[str, str]\n" f'    """{DEFAULT_DESCRIPTION}    """\n',
+                f"    test_name: dict[str, str]\n" f'    """{DEFAULT_DESCRIPTION}\n    """\n',
             ),
             (
                 {**MINIMUM_DATA, "description": "Test description"},
                 f"    test_name: typing.Optional[dict[str, str]] = None\n"
-                f'    """\n    Test description{DEFAULT_DESCRIPTION}    """\n',
+                f'    """\n    Test description{DEFAULT_DESCRIPTION}\n    """\n',
             ),
             (
                 {
@@ -42,7 +40,7 @@ class TestPatterField:
                     },
                 },
                 f"    test_name: typing.Optional[dict[str, typing.Union[str, int]]] = None\n"
-                f'    """{DEFAULT_DESCRIPTION}    this_is_regexp2: int\n    """\n',
+                f'    """{DEFAULT_DESCRIPTION}, this_is_regexp2\n    """\n',
             ),
         ],
     )
