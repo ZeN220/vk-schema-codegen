@@ -16,14 +16,9 @@ class PatternField(BaseField):
             return f"dict[str, {types}]"
         return f"dict[str, typing.Union[{types}]]"
 
-    def _get_description(self) -> str:
-        if self.description is not None:
-            string = f'    """\n    {self.description}\n'
-        else:
-            string = '    """\n'
-
-        string += "    Patterns of dict (as regexp) in the form of key-value:\n"
-        for pattern, field in self.patternProperties.items():
-            string += f"    {pattern}: {field.__typehint__}\n"
-        string += '    """\n'
-        return string
+    def _get_description(self) -> dict:
+        description_object = super()._get_description()
+        string = "Patterns of dict keys (as regexp)"
+        patterns = [pattern for pattern in self.patternProperties.keys()]
+        description_object[string] = ", ".join(patterns)
+        return description_object

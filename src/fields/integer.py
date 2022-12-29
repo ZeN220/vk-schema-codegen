@@ -17,6 +17,18 @@ class IntegerField(BaseField):
     def __typehint__(self) -> str:
         return "int"
 
+    def _get_description(self) -> dict:
+        description_object = super()._get_description()
+        if self.minimum is not None:
+            description_object["Minimum value"] = self.minimum
+        if self.maximum is not None:
+            description_object["Maximum value"] = self.maximum
+        if self.entity is not None:
+            description_object["Entity"] = self.entity
+        if self.format is not None:
+            description_object["Format"] = self.format
+        return description_object
+
     def _get_default_field_class(self) -> str:
         if self.default is None:
             raise ValueError("Default value is not defined")
@@ -38,5 +50,5 @@ class IntegerField(BaseField):
         else:
             string = self._get_optional_field_class()
 
-        string += self._get_description()
+        string += self._get_description_field_class()
         return string

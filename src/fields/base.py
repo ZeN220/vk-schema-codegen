@@ -42,10 +42,27 @@ class BaseField(Struct):
             )
         return f"    {self.name}: typing.Optional[{self.__typehint__}] = None\n"
 
-    def _get_description(self) -> str:
+    def _get_description(self) -> dict:
         if self.description is None:
+            return {}
+        return {"description": self.description}
+
+    def _get_description_field_class(self) -> str:
+        description_object = self._get_description()
+        if not description_object:
             return ""
-        return f'    """{self.description}"""\n'
+
+        description = description_object.pop("description", None)
+        # If field has only description, return it
+        if description is not None and not description_object:
+            return f'    """{description}"""\n'
+
+        description_string = ""
+        if description is not None:
+            description_string += f"    {description}\n"
+        for key, value in description_object.items():
+            description_string += f"    {key}: {value}\n"
+        return f'    """\n{description_string}    """\n'
 
     def to_field_class(self):
         if self.required:
@@ -53,5 +70,5 @@ class BaseField(Struct):
         else:
             string = self._get_optional_field_class()
 
-        string += self._get_description()
+        string += self._get_description_field_class()
         return string

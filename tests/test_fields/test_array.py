@@ -27,7 +27,8 @@ class TestArrayField:
                         name="test_name", type="dict", description="Item description"
                     ),
                 },
-                '    test_name: typing.Optional[list[dict]] = None\n    """Item description"""\n',
+                "    test_name: typing.Optional[list[dict]] = None\n"
+                '    """\n    Description of item of array: Item description\n    """\n',
             ),
         ],
     )
