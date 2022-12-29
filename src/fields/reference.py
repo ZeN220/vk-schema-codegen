@@ -41,5 +41,5 @@ class ReferenceField(BaseField):
         else:
             string = self._get_optional_field_class()
 
-        string += self._get_description()
+        string += self._get_description_field_class()
         return string
