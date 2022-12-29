@@ -62,9 +62,7 @@ class BaseField(Struct):
             description_string += f"    {description}\n"
         for key, value in description_object.items():
             description_string += f"    {key}: {value}\n"
-        if description_string:
-            return f'    """\n{description_string}    """\n'
-        return ""
+        return f'    """\n{description_string}    """\n'
 
     def to_field_class(self):
         if self.required:
