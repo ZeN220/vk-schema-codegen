@@ -14,7 +14,7 @@ poetry install
 ## Usage
 Command `python -m src` show help message:
 ```bash
-Usage: python -m src [OPTIONS] COMMAND [ARGS]...
+Usage: __main__.py [OPTIONS] COMMAND [ARGS]...
 
 Options:
   -o, --output-dir DIRECTORY  Directory to save the output files  [default:
@@ -24,8 +24,13 @@ Options:
   --help                      Show this message and exit.
 
 Commands:
+  generate   Generate code for all entities from API schema
   objects    Generate objects from API schema
-  responses  Generate objects from API schema
+  responses  Generate responses from API schema
+```
+For generating code you need to use `generate` command:
+```bash
+python -m src generate
 ```
 
 ### Generate objects
