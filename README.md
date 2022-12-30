@@ -24,7 +24,7 @@ Options:
   --help                      Show this message and exit.
 
 Commands:
-  generate   Generate code for all entities from API schema
+  generate   Generate all entities from API schema
   objects    Generate objects from API schema
   responses  Generate responses from API schema
 ```
