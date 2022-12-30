@@ -18,15 +18,15 @@ class TestConverter:
         assert to_camel_case(snake_str) == expected
 
     @pytest.mark.parametrize(
-        "type_field, expected",
+        "type_, expected",
         [
             ("string", "str"),
             ("integer", "int"),
             ("boolean", "bool"),
         ],
     )
-    def test_to_python_type(self, type_field: str, expected: str):
-        assert to_python_type(type_field) == expected
+    def test_to_python_type(self, type_: str, expected: str):
+        assert to_python_type(type_) == expected
 
     def test_to_python_type_unknown(self):
         with pytest.raises(ValueError):

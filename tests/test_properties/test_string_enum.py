@@ -1,6 +1,6 @@
 import pytest
 
-from src.fields import StringEnumField
+from src.properties import StringEnumProperty
 
 MINIMUM_DATA: dict = {
     "__typehint__": "ObjectTestName",
@@ -34,5 +34,5 @@ class TestStringEnumProperty:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = StringEnumField(**data)
-        assert field.to_field_class() == expected
+        property_ = StringEnumProperty(**data)
+        assert property_.to_field_class() == expected

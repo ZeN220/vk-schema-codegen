@@ -1,11 +1,11 @@
 import pytest
 
-from src.fields import BooleanField
+from src.properties import BooleanProperty
 
 MINIMUM_DATA: dict = {"name": "test_name", "type": "boolean"}
 
 
-class TestBooleanField:
+class TestBooleanProperty:
     @pytest.mark.parametrize(
         "data, expected",
         [
@@ -20,23 +20,23 @@ class TestBooleanField:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = BooleanField(**data)
-        assert field.to_field_class() == expected
+        property_ = BooleanProperty(**data)
+        assert property_.to_field_class() == expected
 
     def test__get_default_field_class(self):
-        field = BooleanField(default=True, **MINIMUM_DATA)
-        assert field._get_default_field_class() == "    test_name: bool = True\n"
+        property_ = BooleanProperty(default=True, **MINIMUM_DATA)
+        assert property_._get_default_field_class() == "    test_name: bool = True\n"
 
     def test__get_default_field_class_with_alias(self):
         test_data = {"type": "boolean", "name": "global", "default": True}
-        field = BooleanField(**test_data)
-        assert field._get_default_field_class() == (
+        property_ = BooleanProperty(**test_data)
+        assert property_._get_default_field_class() == (
             "    global_: bool = pydantic.Field(\n"
             '        default=True, alias="global"\n'
             "    )\n"
         )
 
     def test__get_default_field_class_no_default(self):
-        field = BooleanField(**MINIMUM_DATA)
+        property_ = BooleanProperty(**MINIMUM_DATA)
         with pytest.raises(ValueError):
-            field._get_default_field_class()
+            property_._get_default_field_class()

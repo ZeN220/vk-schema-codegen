@@ -1,19 +1,19 @@
 import pytest
 
-from src.fields import IntegerField, PatternField, StringField
+from src.properties import IntegerProperty, PatternProperty, StringProperty
 
 # For testing, need to create a fake class to use as the pattern properties
 MINIMUM_DATA: dict = {
     "name": "test_name",
     "type": "object",
-    "patternProperties": {"this_is_regexp": StringField(name="test_name", type="string")},
+    "patternProperties": {"this_is_regexp": StringProperty(name="test_name", type="string")},
     "additionalProperties": False,
 }
 
 DEFAULT_DESCRIPTION = "\n    Patterns of dict keys (as regexp): this_is_regexp"
 
 
-class TestPatternField:
+class TestPatternProperty:
     @pytest.mark.parametrize(
         "data, expected",
         [
@@ -35,8 +35,8 @@ class TestPatternField:
                 {
                     **MINIMUM_DATA,
                     "patternProperties": {
-                        "this_is_regexp": StringField(name="test_name", type="string"),
-                        "this_is_regexp2": IntegerField(name="test_name2", type="integer"),
+                        "this_is_regexp": StringProperty(name="test_name", type="string"),
+                        "this_is_regexp2": IntegerProperty(name="test_name2", type="integer"),
                     },
                 },
                 f"    test_name: typing.Optional[dict[str, typing.Union[str, int]]] = None\n"
@@ -45,5 +45,5 @@ class TestPatternField:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = PatternField(**data)
-        assert field.to_field_class() == expected
+        property_ = PatternProperty(**data)
+        assert property_.to_field_class() == expected

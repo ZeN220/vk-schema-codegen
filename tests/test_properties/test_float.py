@@ -1,11 +1,11 @@
 import pytest
 
-from src.fields import FloatField
+from src.properties import FloatProperty
 
 MINIMUM_DATA: dict = {"name": "test_name", "type": "float"}
 
 
-class TestFloatField:
+class TestFloatProperty:
     @pytest.mark.parametrize(
         "data, expected",
         [
@@ -33,5 +33,5 @@ class TestFloatField:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = FloatField(**data)
-        assert field.to_field_class() == expected
+        property_ = FloatProperty(**data)
+        assert property_.to_field_class() == expected

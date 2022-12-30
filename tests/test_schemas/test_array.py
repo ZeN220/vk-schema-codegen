@@ -1,4 +1,4 @@
-from src.fields import DictField
+from src.properties import DictProperty
 from src.schemas import ArraySchema
 
 
@@ -8,7 +8,7 @@ class TestArraySchema:
             name="TestName", data={"type": "array", "items": {"type": "object"}}
         )
         assert schema.name == "TestName"
-        assert schema.items == DictField(name="TestName", type="object")
+        assert schema.items == DictProperty(name="TestName", type="object")
 
     def test_to_class(self):
         schema = ArraySchema.from_dict(

@@ -1,11 +1,11 @@
 import pytest
 
-from src.fields import StringField
+from src.properties import StringProperty
 
 MINIMUM_DATA: dict = {"name": "test_name", "type": "string"}
 
 
-class TestStringField:
+class TestStringProperty:
     @pytest.mark.parametrize(
         "data, expected",
         [
@@ -28,5 +28,5 @@ class TestStringField:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = StringField(**data)
-        assert field.to_field_class() == expected
+        property_ = StringProperty(**data)
+        assert property_.to_field_class() == expected
