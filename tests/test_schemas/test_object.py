@@ -1,4 +1,4 @@
-from src.fields import IntegerField, StringEnumField
+from src.properties import IntegerProperty, StringEnumProperty
 from src.schemas import ObjectSchema
 
 
@@ -15,11 +15,11 @@ class TestObjectSchema:
 
         assert schema.properties[0].name == "id"
         assert schema.properties[0].type == "integer"
-        assert isinstance(schema.properties[0], IntegerField)
+        assert isinstance(schema.properties[0], IntegerProperty)
 
         assert schema.properties[1].name == "enum_property"
         assert schema.properties[1].type == "string"
-        assert isinstance(schema.properties[1], StringEnumField)
+        assert isinstance(schema.properties[1], StringEnumProperty)
 
     def test_to_class(self):
         properties = {

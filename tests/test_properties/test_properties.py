@@ -1,21 +1,21 @@
 import pytest
 
-from src.fields import (
-    ArrayField,
-    BaseField,
-    BooleanField,
-    DictField,
-    FloatField,
-    IntegerEnumField,
-    IntegerField,
-    OneOfField,
-    PatternField,
-    ReferenceField,
-    StringEnumField,
-    StringField,
-    UnionField,
-    get_enum_field_from_dict,
-    get_field_from_dict,
+from src.properties import (
+    ArrayProperty,
+    BaseProperty,
+    BooleanProperty,
+    DictProperty,
+    FloatProperty,
+    IntegerEnumProperty,
+    IntegerProperty,
+    OneOfProperty,
+    PatternProperty,
+    ReferenceProperty,
+    StringEnumProperty,
+    StringProperty,
+    UnionProperty,
+    get_enum_property_from_dict,
+    get_property_from_dict,
 )
 
 MINIMUM_DATA: dict = {"name": "test_name"}
@@ -26,45 +26,45 @@ MINIMUM_DATA: dict = {"name": "test_name"}
     [
         (
             {**MINIMUM_DATA, "item": {"type": "string"}},
-            StringField(name="test_name", type="string"),
+            StringProperty(name="test_name", type="string"),
         ),
         (
             {**MINIMUM_DATA, "item": {"type": "integer"}},
-            IntegerField(name="test_name", type="integer"),
+            IntegerProperty(name="test_name", type="integer"),
         ),
         (
             {**MINIMUM_DATA, "item": {"type": "number"}},
-            FloatField(name="test_name", type="number"),
+            FloatProperty(name="test_name", type="number"),
         ),
         (
             {**MINIMUM_DATA, "item": {"type": "boolean"}},
-            BooleanField(name="test_name", type="boolean"),
+            BooleanProperty(name="test_name", type="boolean"),
         ),
         (
             {**MINIMUM_DATA, "item": {"type": "object"}},
-            DictField(name="test_name", type="object"),
+            DictProperty(name="test_name", type="object"),
         ),
         (
             {**MINIMUM_DATA, "item": {"$ref": "../dir/objects.json#/definitions/object"}},
-            ReferenceField(name="test_name", reference="Object"),
+            ReferenceProperty(name="test_name", reference="Object"),
         ),
         (
             {**MINIMUM_DATA, "item": {"type": "array", "items": {"type": "object"}}},
-            ArrayField(
-                name="test_name", type="array", items=DictField(name="test_name", type="object")
+            ArrayProperty(
+                name="test_name", type="array", items=DictProperty(name="test_name", type="object")
             ),
         ),
         (
             {**MINIMUM_DATA, "item": {"type": ["string", "integer"]}},
-            UnionField(name="test_name", type=["string", "integer"]),
+            UnionProperty(name="test_name", type=["string", "integer"]),
         ),
         (
             {**MINIMUM_DATA, "item": {"oneOf": [{"type": "string"}, {"type": "integer"}]}},
-            OneOfField(
+            OneOfProperty(
                 name="test_name",
                 oneOf=[
-                    StringField(name="test_name", type="string"),
-                    IntegerField(name="test_name", type="integer"),
+                    StringProperty(name="test_name", type="string"),
+                    IntegerProperty(name="test_name", type="integer"),
                 ],
             ),
         ),
@@ -77,22 +77,24 @@ MINIMUM_DATA: dict = {"name": "test_name"}
                     "additionalProperties": False,
                 },
             },
-            PatternField(
+            PatternProperty(
                 type="object",
                 name="test_name",
-                patternProperties={"this_is_regexp": StringField(name="test_name", type="string")},
+                patternProperties={
+                    "this_is_regexp": StringProperty(name="test_name", type="string")
+                },
                 additionalProperties=False,
             ),
         ),
     ],
 )
-def test_get_field_from_dict(arguments: dict, expected: BaseField):
-    assert get_field_from_dict(**arguments) == expected
+def test_get_property_from_dict(arguments: dict, expected: BaseProperty):
+    assert get_property_from_dict(**arguments) == expected
 
 
-def test_get_field_from_dict_unknown():
+def test_get_property_from_dict_unknown():
     with pytest.raises(ValueError):
-        get_field_from_dict(item={"type": "unknown"}, **MINIMUM_DATA)
+        get_property_from_dict(item={"type": "unknown"}, **MINIMUM_DATA)
 
 
 @pytest.mark.parametrize(
@@ -104,7 +106,7 @@ def test_get_field_from_dict_unknown():
                 "item": {"type": "string", "enum": ["a", "b", "c"]},
                 "typehint": "TestTypeHint",
             },
-            StringEnumField(
+            StringEnumProperty(
                 __typehint__="TestTypeHint",
                 name="test_name",
                 type="string",
@@ -117,7 +119,7 @@ def test_get_field_from_dict_unknown():
                 "item": {"type": "integer", "enum": [1, 2, 3], "enumNames": ["a", "b", "c"]},
                 "typehint": "TestTypeHint",
             },
-            IntegerEnumField(
+            IntegerEnumProperty(
                 __typehint__="TestTypeHint",
                 name="test_name",
                 type="integer",
@@ -127,12 +129,12 @@ def test_get_field_from_dict_unknown():
         ),
     ],
 )
-def test_get_enum_field_from_dict(arguments: dict, expected: BaseField):
-    assert get_enum_field_from_dict(**arguments) == expected
+def test_get_enum_property_from_dict(arguments: dict, expected: BaseProperty):
+    assert get_enum_property_from_dict(**arguments) == expected
 
 
-def test_get_enum_field_from_dict_unknown():
+def test_get_enum_property_from_dict_unknown():
     with pytest.raises(ValueError):
-        get_enum_field_from_dict(
+        get_enum_property_from_dict(
             item={"type": "unknown"}, name="test_name", typehint="TestTypeHint"
         )

@@ -1,11 +1,11 @@
 import pytest
 
-from src.fields import ReferenceField
+from src.properties import ReferenceProperty
 
 MINIMUM_DATA: dict = {"name": "test_name", "reference": "Object"}
 
 
-class TestReferenceField:
+class TestReferenceProperty:
     @pytest.mark.parametrize(
         "data, expected",
         [
@@ -22,12 +22,12 @@ class TestReferenceField:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = ReferenceField(**data)
-        assert field.to_field_class() == expected
+        property_ = ReferenceProperty(**data)
+        assert property_.to_field_class() == expected
 
     def test__get_default_field_class(self):
-        field = ReferenceField(default="test_default", **MINIMUM_DATA)
-        assert field._get_default_field_class() == (
+        property_ = ReferenceProperty(default="test_default", **MINIMUM_DATA)
+        assert property_._get_default_field_class() == (
             "    test_name: Object = Object.TEST_DEFAULT\n"
         )
 
@@ -37,14 +37,14 @@ class TestReferenceField:
             "reference": "Object",
             "default": "test_default",
         }
-        field = ReferenceField(**test_data)
-        assert field._get_default_field_class() == (
+        property_ = ReferenceProperty(**test_data)
+        assert property_._get_default_field_class() == (
             "    global_: Object = pydantic.Field(\n"
             '        default=Object.TEST_DEFAULT, alias="global"\n'
             "    )\n"
         )
 
     def test__get_default_field_class_no_default(self):
-        field = ReferenceField(**MINIMUM_DATA)
+        property_ = ReferenceProperty(**MINIMUM_DATA)
         with pytest.raises(ValueError):
-            field._get_default_field_class()
+            property_._get_default_field_class()

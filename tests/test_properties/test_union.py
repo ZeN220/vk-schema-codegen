@@ -1,11 +1,11 @@
 import pytest
 
-from src.fields import UnionField
+from src.properties import UnionProperty
 
 MINIMUM_DATA: dict = {"name": "test_name", "type": ["string", "integer"]}
 
 
-class TestUnionField:
+class TestUnionProperty:
     @pytest.mark.parametrize(
         "data, expected",
         [
@@ -19,5 +19,5 @@ class TestUnionField:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = UnionField(**data)
-        assert field.to_field_class() == expected
+        property_ = UnionProperty(**data)
+        assert property_.to_field_class() == expected
