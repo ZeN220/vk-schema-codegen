@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from src.strings import to_camel_case, validate_field
+from src.strings import to_camel_case, validate_name
 
 from .base import BaseSchema
 
@@ -71,7 +71,7 @@ def _validate_enum(enum_data: dict):
         enum_names = enum_data["enum"]
 
     for enum_name in enum_names:
-        names.append(validate_field(enum_name))
+        names.append(validate_name(enum_name))
     enum_data["enumNames"] = names
 
 

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Optional
 
-from .string import StringField
+from .string import StringProperty
 
 
-class StringEnumField(StringField):
+class StringEnumProperty(StringProperty):
     __typehint__: str
 
     type: str

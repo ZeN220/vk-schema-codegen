@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from src.strings import to_python_types
 
-from .base import BaseField
+from .base import BaseProperty
 
 
-class UnionField(BaseField):
+class UnionProperty(BaseProperty):
     type: list[str]
 
     @property

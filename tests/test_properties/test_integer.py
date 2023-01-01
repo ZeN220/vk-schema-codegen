@@ -1,11 +1,11 @@
 import pytest
 
-from src.fields import IntegerField
+from src.properties import IntegerProperty
 
 MINIMUM_DATA: dict = {"name": "test_name", "type": "integer"}
 
 
-class TestIntegerField:
+class TestIntegerProperty:
     @pytest.mark.parametrize(
         "data, expected",
         [
@@ -39,21 +39,21 @@ class TestIntegerField:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = IntegerField(**data)
-        assert field.to_field_class() == expected
+        property_ = IntegerProperty(**data)
+        assert property_.to_field_class() == expected
 
     def test__get_default_field_class(self):
-        field = IntegerField(default=1, **MINIMUM_DATA)
-        assert field._get_default_field_class() == "    test_name: int = 1\n"
+        property_ = IntegerProperty(default=1, **MINIMUM_DATA)
+        assert property_._get_default_field_class() == "    test_name: int = 1\n"
 
     def test__get_default_field_class_with_alias(self):
         test_data = {"type": "integer", "name": "global", "default": 1}
-        field = IntegerField(**test_data)
-        assert field._get_default_field_class() == (
+        property_ = IntegerProperty(**test_data)
+        assert property_._get_default_field_class() == (
             '    global_: int = pydantic.Field(\n        default=1, alias="global"\n    )\n'
         )
 
     def test__get_default_field_class_no_default(self):
-        field = IntegerField(**MINIMUM_DATA)
+        property_ = IntegerProperty(**MINIMUM_DATA)
         with pytest.raises(ValueError):
-            field._get_default_field_class()
+            property_._get_default_field_class()

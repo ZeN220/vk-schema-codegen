@@ -1,9 +1,9 @@
 from typing import Optional, Union
 
-from .base import BaseField
+from .base import BaseProperty
 
 
-class FloatField(BaseField):
+class FloatProperty(BaseProperty):
     type: str
     minimum: Optional[Union[int, float]] = None
     maximum: Optional[int] = None

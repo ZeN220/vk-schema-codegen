@@ -1,4 +1,4 @@
-from src.fields import StringEnumField
+from src.properties import StringEnumProperty
 from src.schemas import ResponseSchema
 
 
@@ -25,11 +25,11 @@ class TestResponseSchema:
 
         assert schema.name == "TestName"
         assert schema.response.name == "response"
-        assert isinstance(schema.response, StringEnumField)
+        assert isinstance(schema.response, StringEnumProperty)
         assert schema.response.enum == ["test_value", "another_value"]
 
     def test_to_class(self):
         response = {"type": "integer", "required": True}
         schema = ResponseSchema.from_dict(name="TestName", response=response)
         class_string = schema.to_class()
-        assert class_string == ("class TestName(pydantic.BaseModel):\n" "    response: int\n\n")
+        assert class_string == "class TestName(pydantic.BaseModel):\n" "    response: int\n\n"

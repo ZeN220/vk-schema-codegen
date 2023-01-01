@@ -8,18 +8,18 @@ def to_camel_case(snake_str: str) -> str:
     return result
 
 
-def to_python_type(type_field: str) -> str:
-    if type_field == "string":
+def to_python_type(type_: str) -> str:
+    if type_ == "string":
         return "str"
-    elif type_field == "integer":
+    elif type_ == "integer":
         return "int"
-    elif type_field == "boolean":
+    elif type_ == "boolean":
         return "bool"
-    raise ValueError(f"Unknown union type: {type_field}")
+    raise ValueError(f"Unknown type: {type_}")
 
 
 def to_python_types(types: list[str]) -> list[str]:
     result = []
-    for type_field in types:
-        result.append(to_python_type(type_field))
+    for type_ in types:
+        result.append(to_python_type(type_))
     return result

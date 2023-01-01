@@ -1,16 +1,16 @@
 import pytest
 
-from src.fields import ArrayField, DictField
+from src.properties import ArrayProperty, DictProperty
 
 # For testing, need to create a fake class to use as the items class
 MINIMUM_DATA: dict = {
     "name": "test_name",
     "type": "array",
-    "items": DictField(name="test_name", type="dict"),
+    "items": DictProperty(name="test_name", type="dict"),
 }
 
 
-class TestArrayField:
+class TestArrayProperty:
     @pytest.mark.parametrize(
         "data, expected",
         [
@@ -23,7 +23,7 @@ class TestArrayField:
             (
                 {
                     **MINIMUM_DATA,
-                    "items": DictField(
+                    "items": DictProperty(
                         name="test_name", type="dict", description="Item description"
                     ),
                 },
@@ -33,5 +33,5 @@ class TestArrayField:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = ArrayField(**data)
-        assert field.to_field_class() == expected
+        property_ = ArrayProperty(**data)
+        assert property_.to_field_class() == expected

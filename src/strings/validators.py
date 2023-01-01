@@ -13,7 +13,7 @@ def is_valid_name(string: str) -> bool:
     return True
 
 
-def validate_field(string: str) -> str:
+def validate_name(string: str) -> str:
     if string[0].isdigit():
         return f"_{string}"
     if keyword.iskeyword(string):

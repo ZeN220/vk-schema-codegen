@@ -1,11 +1,11 @@
 from typing import Literal, Optional
 
-from src.strings import is_valid_name, validate_field
+from src.strings import is_valid_name, validate_name
 
-from .base import BaseField
+from .base import BaseProperty
 
 
-class IntegerField(BaseField):
+class IntegerProperty(BaseProperty):
     type: str
     default: Optional[int] = None
     minimum: Optional[int] = None
@@ -34,7 +34,7 @@ class IntegerField(BaseField):
             raise ValueError("Default value is not defined")
         name_is_valid = is_valid_name(self.name)
         if not name_is_valid:
-            name = validate_field(self.name)
+            name = validate_name(self.name)
             return (
                 f"    {name}: {self.__typehint__} = pydantic.Field(\n"
                 f'        default={self.default}, alias="{self.name}"\n'

@@ -1,11 +1,11 @@
 from typing import Optional, Union
 
-from src.strings import is_valid_name, validate_field
+from src.strings import is_valid_name, validate_name
 
-from .base import BaseField
+from .base import BaseProperty
 
 
-class BooleanField(BaseField):
+class BooleanProperty(BaseProperty):
     type: str
     default: Optional[Union[bool, int]] = None
 
@@ -20,7 +20,7 @@ class BooleanField(BaseField):
         typehint = self.__typehint__
         default = bool(self.default)
         if not name_is_valid:
-            name = validate_field(self.name)
+            name = validate_name(self.name)
             return (
                 f"    {name}: {typehint} = pydantic.Field(\n"
                 f'        default={default}, alias="{self.name}"\n'

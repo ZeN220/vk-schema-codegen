@@ -1,11 +1,11 @@
 from typing import Optional
 
-from src.strings import is_valid_name, validate_field
+from src.strings import is_valid_name, validate_name
 
-from .base import BaseField
+from .base import BaseProperty
 
 
-class ReferenceField(BaseField):
+class ReferenceProperty(BaseProperty):
     type: str = "reference"
     """
     This field is missing from original schema for this property,
@@ -25,7 +25,7 @@ class ReferenceField(BaseField):
         # If reference to have default value, then this value is the field of enum
         default_value = f"{self.__typehint__}.{self.default.upper()}"
         if not name_is_valid:
-            name = validate_field(self.name)
+            name = validate_name(self.name)
             return (
                 f"    {name}: {self.__typehint__} = pydantic.Field(\n"
                 f'        default={default_value}, alias="{self.name}"\n'

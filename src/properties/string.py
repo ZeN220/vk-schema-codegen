@@ -1,9 +1,9 @@
 from typing import Literal, Optional
 
-from .base import BaseField
+from .base import BaseProperty
 
 
-class StringField(BaseField):
+class StringProperty(BaseProperty):
     type: str
     maxLength: Optional[int] = None
     format: Optional[Literal["uri"]] = None

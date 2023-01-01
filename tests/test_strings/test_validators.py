@@ -2,7 +2,7 @@ import pytest
 
 from src.strings.validators import (
     is_valid_name,
-    validate_field,
+    validate_name,
     validate_order_references,
 )
 
@@ -27,8 +27,8 @@ def test_is_valid_name(string: str, expected: bool):
         ("class", "class_"),
     ],
 )
-def test_validate_field(string: str, expected: str):
-    assert validate_field(string) == expected
+def test_validate_name(string: str, expected: str):
+    assert validate_name(string) == expected
 
 
 @pytest.mark.parametrize(

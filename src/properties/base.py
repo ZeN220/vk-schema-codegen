@@ -2,10 +2,10 @@ from typing import Optional, Union
 
 from msgspec import Struct
 
-from src.strings import is_valid_name, validate_field
+from src.strings import is_valid_name, validate_name
 
 
-class BaseField(Struct):
+class BaseProperty(Struct):
     type: Union[str, list]
     name: str
     required: bool = False
@@ -21,7 +21,7 @@ class BaseField(Struct):
             raise ValueError("Field is not required")
         name_is_valid = is_valid_name(self.name)
         if not name_is_valid:
-            name = validate_field(self.name)
+            name = validate_name(self.name)
             return (
                 f"    {name}: {self.__typehint__} = pydantic.Field(\n"
                 f'        alias="{self.name}"\n'
@@ -34,7 +34,7 @@ class BaseField(Struct):
             raise ValueError("Field is required")
         name_is_valid = is_valid_name(self.name)
         if not name_is_valid:
-            name = validate_field(self.name)
+            name = validate_name(self.name)
             return (
                 f"    {name}: typing.Optional[{self.__typehint__}] = pydantic.Field(\n"
                 f'        default=None, alias="{self.name}"\n'

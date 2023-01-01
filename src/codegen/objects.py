@@ -93,7 +93,8 @@ def parse_objects(objects: dict) -> list[BaseSchema]:
 def generate_classes(objects: list[BaseSchema], output_dir: Path) -> None:
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
-    # Because some objects may have fields with default value as enum, need to generate enums first
+    # Because some objects may have properties with default value as enum,
+    # need to generate enums first
     objects = sorted(objects, key=lambda object_: isinstance(object_, EnumSchema), reverse=True)
     with open(output_dir / "objects.py", "w", encoding="utf-8") as file:
         file.write(IMPORTS)

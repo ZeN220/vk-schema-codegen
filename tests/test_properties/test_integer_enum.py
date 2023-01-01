@@ -1,6 +1,6 @@
 import pytest
 
-from src.fields import IntegerEnumField
+from src.properties import IntegerEnumProperty
 
 MINIMUM_DATA: dict = {
     "__typehint__": "ObjectTestName",
@@ -31,12 +31,12 @@ class TestIntegerEnumProperty:
         ],
     )
     def test_to_field_class(self, data: dict, expected: str):
-        field = IntegerEnumField(**data)
-        assert field.to_field_class() == expected
+        property_ = IntegerEnumProperty(**data)
+        assert property_.to_field_class() == expected
 
     def test__get_default_field_class(self):
-        field = IntegerEnumField(default=1, **MINIMUM_DATA)
-        assert field._get_default_field_class() == (
+        property_ = IntegerEnumProperty(default=1, **MINIMUM_DATA)
+        assert property_._get_default_field_class() == (
             "    test_name: ObjectTestName = ObjectTestName.TEST_NAME\n"
         )
 
@@ -49,19 +49,19 @@ class TestIntegerEnumProperty:
             "enumNames": ["test_name"],
             "default": 1,
         }
-        field = IntegerEnumField(**test_data)
-        assert field._get_default_field_class() == (
+        property_ = IntegerEnumProperty(**test_data)
+        assert property_._get_default_field_class() == (
             "    global_: ObjectTestName = pydantic.Field(\n"
             '        default=ObjectTestName.TEST_NAME, alias="global"\n'
             "    )\n"
         )
 
     def test__get_default_field_class_no_default(self):
-        field = IntegerEnumField(**MINIMUM_DATA)
+        property_ = IntegerEnumProperty(**MINIMUM_DATA)
         with pytest.raises(ValueError):
-            field._get_default_field_class()
+            property_._get_default_field_class()
 
     def test__get_default_enum_undefined(self):
-        field = IntegerEnumField(default=123, **MINIMUM_DATA)
+        property_ = IntegerEnumProperty(default=123, **MINIMUM_DATA)
         with pytest.raises(ValueError):
-            field._get_default_enum()
+            property_._get_default_enum()

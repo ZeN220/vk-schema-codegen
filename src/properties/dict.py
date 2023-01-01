@@ -1,7 +1,7 @@
-from .base import BaseField
+from .base import BaseProperty
 
 
-class DictField(BaseField):
+class DictProperty(BaseProperty):
     type: str
 
     @property

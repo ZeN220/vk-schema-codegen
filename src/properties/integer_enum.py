@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from src.strings import is_valid_name, validate_field
+from src.strings import is_valid_name, validate_name
 
-from .integer import IntegerField
+from .integer import IntegerProperty
 
 
-class IntegerEnumField(IntegerField):
+class IntegerEnumProperty(IntegerProperty):
     __typehint__: str
 
     type: str
@@ -30,7 +30,7 @@ class IntegerEnumField(IntegerField):
         default_value = self._get_default_enum()
         default = f"{self.__typehint__}.{default_value.upper()}"
         if not name_is_valid:
-            name = validate_field(self.name)
+            name = validate_name(self.name)
             return (
                 f"    {name}: {self.__typehint__} = pydantic.Field(\n"
                 f'        default={default}, alias="{self.name}"\n'

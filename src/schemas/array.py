@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import Optional
 
-from src.fields import BaseField, get_field_from_dict
+from src.properties import BaseProperty, get_property_from_dict
 
 from .base import BaseSchema
 
 
 class ArraySchema(BaseSchema):
     type: str
-    items: BaseField
+    items: BaseProperty
     deprecated_from_version: Optional[str] = None
     minItems: Optional[int] = None
     maxItems: Optional[int] = None
@@ -19,7 +19,7 @@ class ArraySchema(BaseSchema):
     def from_dict(cls, name, data: dict) -> ArraySchema:
         # Because we need edit value of items, we need to copy it
         copy_data = data.copy()
-        copy_data["items"] = get_field_from_dict(copy_data["items"], name)
+        copy_data["items"] = get_property_from_dict(copy_data["items"], name)
         schema = cls(name=name, **copy_data)
         return schema
 

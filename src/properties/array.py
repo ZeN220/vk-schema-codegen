@@ -1,9 +1,9 @@
-from .base import BaseField
+from .base import BaseProperty
 
 
-class ArrayField(BaseField):
+class ArrayProperty(BaseProperty):
     type: str
-    items: BaseField
+    items: BaseProperty
 
     @property
     def __typehint__(self) -> str:

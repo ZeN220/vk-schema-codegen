@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from .base import BaseField
+from .base import BaseProperty
 
 
-class PatternField(BaseField):
+class PatternProperty(BaseProperty):
     type: str
-    patternProperties: dict[str, BaseField]
+    patternProperties: dict[str, BaseProperty]
     additionalProperties: bool
 
     @property
     def __typehint__(self) -> str:
-        typehints = [field.__typehint__ for field in self.patternProperties.values()]
+        typehints = [property_.__typehint__ for property_ in self.patternProperties.values()]
         types = ", ".join(typehints)
         if len(typehints) == 1:
             return f"dict[str, {types}]"
