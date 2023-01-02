@@ -16,7 +16,7 @@ class AllOfSchema(BaseSchema):
     allOf: list[ReferenceAllOf]
 
     @classmethod
-    def from_dict(cls, name, all_of: list[dict]) -> AllOfSchema:
+    def from_dict(cls, name: str, all_of: list[dict]) -> AllOfSchema:
         # Because we need edit value of items, we need to copy it
         all_of = all_of.copy()
         try:

@@ -16,7 +16,7 @@ class ArraySchema(BaseSchema):
     description: Optional[str] = None
 
     @classmethod
-    def from_dict(cls, name, data: dict) -> ArraySchema:
+    def from_dict(cls, name: str, data: dict) -> ArraySchema:
         # Because we need edit value of items, we need to copy it
         copy_data = data.copy()
         copy_data["items"] = get_property_from_dict(copy_data["items"], name)

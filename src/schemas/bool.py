@@ -10,7 +10,7 @@ class BoolSchema(BaseSchema):
     description: Optional[str] = None
 
     @classmethod
-    def from_dict(cls, name, data: dict) -> BoolSchema:
+    def from_dict(cls, name: str, data: dict) -> BoolSchema:
         schema = cls(name=name, **data)
         return schema
 

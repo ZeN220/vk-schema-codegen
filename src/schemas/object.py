@@ -14,7 +14,7 @@ class ObjectSchema(BaseSchema):
     properties: list[BaseProperty]
 
     @classmethod
-    def from_dict(cls, name, properties: dict[str, dict]) -> ObjectSchema:
+    def from_dict(cls, name: str, properties: dict[str, dict]) -> ObjectSchema:
         result = []
         for property_name, property_value in properties.items():
             if property_value.get("enum") is not None:

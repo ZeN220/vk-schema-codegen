@@ -33,7 +33,7 @@ class ReferenceProperty(BaseProperty):
             )
         return f"    {self.name}: {self.__typehint__} = {default_value}\n"
 
-    def to_field_class(self):
+    def to_field_class(self) -> str:
         if self.default is not None:
             string = self._get_default_field_class()
         elif self.required:

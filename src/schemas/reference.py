@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from src.strings import get_reference
 
 from .base import BaseSchema
@@ -7,7 +9,7 @@ class ReferenceSchema(BaseSchema):
     reference: str
 
     @classmethod
-    def from_dict(cls, name: str, data: dict):
+    def from_dict(cls, name: str, data: dict) -> ReferenceSchema:
         schema = cls(name=name, reference=data["$ref"])
         return schema
 

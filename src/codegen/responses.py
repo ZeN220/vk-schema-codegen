@@ -16,7 +16,7 @@ from .types import ResponseSection
 logger = logging.getLogger(__name__)
 
 
-def generate_responses(input_dir: Path, output_dir: Path, objects_package: str):
+def generate_responses(input_dir: Path, output_dir: Path, objects_package: str) -> None:
     start = time.time()
     logger.info("Generating responses...")
     schemas = get_responses(input_dir)
@@ -68,7 +68,9 @@ def parse_responses(schemas: dict[str, dict]) -> list[BaseSchema]:
     return responses_result
 
 
-def generate_classes(schemas: list[ResponseSection], output_dir: Path, objects_package: str):
+def generate_classes(
+    schemas: list[ResponseSection], output_dir: Path, objects_package: str
+) -> None:
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
     for schema in schemas:

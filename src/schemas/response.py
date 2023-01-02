@@ -13,7 +13,7 @@ class ResponseSchema(BaseSchema):
     response: BaseProperty
 
     @classmethod
-    def from_dict(cls, name: str, response: dict):
+    def from_dict(cls, name: str, response: dict) -> "ResponseSchema":
         response_field: BaseProperty
         if response.get("properties") is not None:
             response_model = to_camel_case(name) + "Model"

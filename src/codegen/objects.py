@@ -34,7 +34,7 @@ IMPORTS = (
 )
 
 
-def generate_objects(input_dir: Path, output_dir: Path):
+def generate_objects(input_dir: Path, output_dir: Path) -> None:
     start = time.time()
     logger.info("Generating objects...")
     schemas = get_objects(input_dir)
