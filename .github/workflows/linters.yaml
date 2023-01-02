@@ -50,4 +50,4 @@ jobs:
         run: poetry run isort --check-only src tests
 
       - name: Run mypy
-        run: poetry run mypy src tests
+        run: poetry run mypy --strict src

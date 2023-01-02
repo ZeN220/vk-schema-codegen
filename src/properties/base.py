@@ -64,7 +64,7 @@ class BaseProperty(Struct):
             description_string += f"    {key}: {value}\n"
         return f'    """\n{description_string}    """\n'
 
-    def to_field_class(self):
+    def to_field_class(self) -> str:
         if self.required:
             string = self._get_required_field_class()
         else:

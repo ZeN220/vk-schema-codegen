@@ -23,6 +23,10 @@ pytest-cov = "^4.0.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.mypy]
+# In some functions, that work with objects of schema, cannot be have accurate types
+disable_error_code = ["type-arg"]
+
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true

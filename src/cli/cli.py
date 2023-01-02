@@ -29,7 +29,7 @@ from .config import Config
     type=click.Path(exists=True, file_okay=False, path_type=Path),
 )
 @click.pass_context
-def cli(ctx: click.Context, output_dir: Path, input_dir: Path):
+def cli(ctx: click.Context, output_dir: Path, input_dir: Path) -> None:
     logging.basicConfig(
         level=logging.INFO,
         format="[%(levelname)s] %(asctime)s - %(name)s - %(message)s",
@@ -38,7 +38,7 @@ def cli(ctx: click.Context, output_dir: Path, input_dir: Path):
     ctx.obj = config
 
 
-def main():
+def main() -> None:
     for command in [command_generate_objects, command_generate_responses, command_generate]:
         cli.add_command(command)  # noqa
     cli()

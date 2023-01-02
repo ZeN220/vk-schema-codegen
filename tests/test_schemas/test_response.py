@@ -1,4 +1,4 @@
-from src.properties import StringEnumProperty
+from src.properties import ReferenceProperty, StringEnumProperty
 from src.schemas import ResponseSchema
 
 
@@ -17,6 +17,7 @@ class TestResponseSchema:
 
         assert schema.name == "TestName"
         assert schema.response.name == "response"
+        assert isinstance(schema.response, ReferenceProperty)
         assert schema.response.reference == "TestNameModel"
 
     def test_from_dict_enum(self):

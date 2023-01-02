@@ -28,7 +28,7 @@ class BooleanProperty(BaseProperty):
             )
         return f"    {self.name}: {typehint} = {default}\n"
 
-    def to_field_class(self):
+    def to_field_class(self) -> str:
         if self.default is not None:
             string = self._get_default_field_class()
         elif self.required:

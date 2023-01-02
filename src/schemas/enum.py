@@ -63,7 +63,7 @@ def get_enum_from_dict(name: str, enum_data: dict) -> EnumSchema:
     raise ValueError(f"Unknown enum type: {enum_data}")
 
 
-def _validate_enum(enum_data: dict):
+def _validate_enum(enum_data: dict) -> None:
     names = []
     if enum_data.get("enumNames") is not None:
         enum_names = enum_data["enumNames"]
