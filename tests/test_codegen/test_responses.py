@@ -4,12 +4,12 @@ from pathlib import Path
 import pytest
 
 from src.codegen.responses import (
+    ResponseSection,
     generate_classes,
     generate_responses,
     get_responses,
     parse_responses,
 )
-from src.codegen.types import ResponseSection
 from src.schemas import ObjectSchema, ResponseSchema
 from src.schemas.enum import EnumStringSchema, get_enum_from_dict
 

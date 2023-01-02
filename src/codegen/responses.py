@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
@@ -11,9 +12,14 @@ from src.schemas import BaseSchema, ObjectSchema, ResponseSchema
 from src.schemas.enum import get_enum_from_dict, get_enums_from_object
 from src.strings import parse_responses_references, to_camel_case
 
-from .types import ResponseSection
-
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ResponseSection:
+    name: str
+    imports: Iterable[str]
+    responses: list[BaseSchema]
 
 
 def generate_responses(input_dir: Path, output_dir: Path, objects_package: str) -> None:
