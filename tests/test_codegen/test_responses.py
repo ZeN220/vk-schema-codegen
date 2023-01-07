@@ -99,8 +99,10 @@ def test_generate_classes(tmp_path):
 
     generate_classes([test_section, test_section_2], output, "package")
 
+    init_file_path = output / "__init__.py"
     section_path = output / "section.py"
     section_2_path = output / "section_2.py"
+    assert init_file_path.exists()
     assert section_path.exists()
     assert section_2_path.exists()
     assert section_path.read_text() == (
