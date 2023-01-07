@@ -79,6 +79,8 @@ def generate_classes(
 ) -> None:
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
+    open(output_dir / "__init__.py", "w").close()
+
     for schema in schemas:
         classes = ""
         for response in schema.responses:
