@@ -28,7 +28,7 @@ class TestArrayProperty:
                     ),
                 },
                 "    test_name: typing.Optional[list[dict]] = None\n"
-                '    """\n    Description of item of array: Item description\n    """\n',
+                '    """\n    Description array item: Item description\n    """\n',
             ),
         ],
     )
