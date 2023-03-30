@@ -15,12 +15,14 @@ from .string_enum import StringEnumProperty
 from .union import UnionProperty
 
 
-PROPERTIES_TYPES = {"$ref", "oneOf", "patternProperties", "type"}
+PROPERTIES_TYPES = {"$ref", "oneOf", "patternProperties"}
 
 
 def extract_property_type(item: dict) -> str:
-    prop = list(filter(lambda x: x in PROPERTIES_TYPES, item.keys()))[0]
-    return prop
+    prop = list(filter(lambda x: x in PROPERTIES_TYPES, item.keys()))
+    if len(prop) > 0:
+        return prop[0]
+    return None
 
 
 class TypesHandler:
@@ -104,7 +106,10 @@ def get_property_from_dict(item: dict, name: str) -> BaseProperty:
     :return: property as BaseProperty class
     """
     property_type = extract_property_type(item)
-    types_handler = TypesHandler(property_type)
+    if property_type is None:
+        types_handler = TypesHandler("type")
+    else:
+        types_handler = TypesHandler(property_type)
 
     return types_handler.handle_item_type(item, name)
 
