@@ -29,6 +29,8 @@ class TypesHandler:
         # dollar sign is not allowed in python variable name
         if item_type == "$ref":
             self.type = "ref"
+        elif isinstance(item_type, list):
+            self.type = "union"
         else:
             self.type = item_type
 
@@ -64,6 +66,9 @@ class TypesHandler:
 
     def build_from_object(self, item: dict, name: str) -> BaseProperty:
         return DictProperty(name=name, **item)
+
+    def build_from_union(self, item: dict, name: str) -> BaseProperty:
+        return UnionProperty(name=name, **item)
 
     def build_from_integer(self, item: dict, name: str) -> BaseProperty:
         return IntegerProperty(name=name, **item)
