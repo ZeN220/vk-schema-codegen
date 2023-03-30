@@ -33,7 +33,7 @@ class TypesHandler:
             self.type = item_type
 
     def handle_item_type(self, item: dict, name: str) -> BaseProperty:
-        method = getattr(self, f"build_from_{self.type}")
+        method = getattr(self, f"build_from_{self.type}", self.build_from_unknown_type)
         return method(item, name)
 
     def build_from_ref(self, item: dict, name: str) -> BaseProperty:
@@ -56,31 +56,38 @@ class TypesHandler:
         }
         return PatternProperty(name=name, patternProperties=pattern_properties, **copy_item)
 
+    def build_from_array(self, item: dict, name: str) -> BaseProperty:
+        copy_item = item.copy()
+        array_items = copy_item.pop("items")
+        items = get_property_from_dict(array_items, name)
+        return ArrayProperty(name=name, items=items, **copy_item)
+
+    def build_from_object(self, item: dict, name: str) -> BaseProperty:
+        return DictProperty(name=name, **item)
+
+    def build_from_integer(self, item: dict, name: str) -> BaseProperty:
+        return IntegerProperty(name=name, **item)
+
+    def build_from_number(self, item: dict, name: str) -> BaseProperty:
+        return FloatProperty(name=name, **item)
+
+    def build_from_boolean(self, item: dict, name: str) -> BaseProperty:
+        return BooleanProperty(name=name, **item)
+
+    def build_from_string(self, item: dict, name: str) -> BaseProperty:
+        # Some properties with the type "string" may have the field "minimum".
+        # I do not know what it is for, so it is simply deleted
+        copy_item = item.copy()
+        copy_item.pop("minimum", None)
+        return StringProperty(name=name, **copy_item)
+
+    def build_from_unknown_type(self, item: dict, name: str) -> BaseProperty:
+        raise ValueError(f"Unknown property type: {self.type}")
+
     def build_from_type(self, item: dict, name: str) -> BaseProperty:
         property_type = item.get("type")
-        if isinstance(property_type, list):
-            return UnionProperty(name=name, **item)
-        if property_type == "array":
-            copy_item = item.copy()
-            array_items = copy_item.pop("items")
-            items = get_property_from_dict(array_items, name)
-            return ArrayProperty(name=name, items=items, **copy_item)
-        if property_type == "object":
-            return DictProperty(name=name, **item)
-        if property_type == "integer":
-            return IntegerProperty(name=name, **item)
-        if property_type == "number":
-            return FloatProperty(name=name, **item)
-        if property_type == "boolean":
-            return BooleanProperty(name=name, **item)
-        if property_type == "string":
-            # Some properties with the type "string" may have the field "minimum".
-            # I do not know what it is for, so it is simply deleted
-            copy_item = item.copy()
-            copy_item.pop("minimum", None)
-            return StringProperty(name=name, **copy_item)
-        else:
-            raise ValueError(f"Unknown property type: {property_type}")
+        types_handler = TypesHandler(property_type)
+        return types_handler.handle_item_type(item, name)
 
 
 def get_property_from_dict(item: dict, name: str) -> BaseProperty:
