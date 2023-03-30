@@ -6,11 +6,7 @@ from .reference import parse_reference
 
 
 def is_valid_name(string: str) -> bool:
-    if string[0].isdigit():
-        return False
-    if keyword.iskeyword(string):
-        return False
-    return True
+    return not (string[0].isdigit() or keyword.iskeyword(string))
 
 
 def validate_name(string: str) -> str:
