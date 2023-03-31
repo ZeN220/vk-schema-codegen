@@ -8,9 +8,10 @@ from typing import Iterable
 
 import msgspec
 
+from src.references import parse_objects_references
 from src.schemas import BaseSchema, ObjectSchema, ResponseSchema
 from src.schemas.enum import get_enum_from_dict, get_enums_from_object
-from src.strings import parse_responses_references, to_camel_case
+from src.strings import to_camel_case
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ def get_responses(input_dir: Path) -> list[ResponseSection]:
             continue
         objects = msgspec.json.decode(file_dir.read_bytes())
         objects = objects["definitions"]
-        imports = parse_responses_references(objects)
+        imports = parse_objects_references(objects)
         result = parse_responses(objects)
         section = ResponseSection(name=directory.name, responses=result, imports=imports)
         schemas.append(section)

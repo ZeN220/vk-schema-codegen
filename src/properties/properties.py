@@ -1,4 +1,4 @@
-from src.strings import get_reference
+from src.references import get_reference
 
 from .array import ArrayProperty
 from .base import BaseProperty

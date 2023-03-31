@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.strings import get_reference
+from src.references import get_reference
 
 from .base import BaseSchema
 
