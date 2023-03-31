@@ -4,7 +4,7 @@ from typing import Optional
 
 from msgspec import Struct
 
-from src.strings import get_reference
+from src.references import get_reference
 
 from .base import BaseSchema
 from .object import ObjectSchema

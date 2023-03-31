@@ -6,6 +6,7 @@ from pathlib import Path
 
 import msgspec
 
+from src.references import validate_order_references
 from src.schemas import (
     AllOfSchema,
     ArraySchema,
@@ -22,7 +23,6 @@ from src.schemas.enum import (
     get_enums_from_object,
 )
 from src.strings import to_camel_case
-from src.strings.validators import validate_order_references
 
 logger = logging.getLogger(__name__)
 

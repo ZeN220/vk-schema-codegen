@@ -14,11 +14,10 @@ from src.properties import (
     StringEnumProperty,
     StringProperty,
     UnionProperty,
-    get_enum_property_from_dict,
-    get_property_from_dict,
+    get_property,
 )
 
-MINIMUM_DATA: dict = {"name": "test_name"}
+MINIMUM_DATA: dict = {"name": "test_name", "typehint": "test_typehint"}
 
 
 @pytest.mark.parametrize(
@@ -86,20 +85,6 @@ MINIMUM_DATA: dict = {"name": "test_name"}
                 additionalProperties=False,
             ),
         ),
-    ],
-)
-def test_get_property_from_dict(arguments: dict, expected: BaseProperty):
-    assert get_property_from_dict(**arguments) == expected
-
-
-def test_get_property_from_dict_unknown():
-    with pytest.raises(ValueError):
-        get_property_from_dict(item={"type": "unknown"}, **MINIMUM_DATA)
-
-
-@pytest.mark.parametrize(
-    "arguments, expected",
-    [
         (
             {
                 **MINIMUM_DATA,
@@ -129,12 +114,11 @@ def test_get_property_from_dict_unknown():
         ),
     ],
 )
-def test_get_enum_property_from_dict(arguments: dict, expected: BaseProperty):
-    assert get_enum_property_from_dict(**arguments) == expected
+def test_get_property(arguments: dict, expected: BaseProperty):
+    assert get_property(**arguments) == expected
 
 
-def test_get_enum_property_from_dict_unknown():
+@pytest.mark.parametrize("item", [{"type": "unknown"}, {"type": "unknown", "enum": ["a"]}])
+def test_get_property_unknown(item):
     with pytest.raises(ValueError):
-        get_enum_property_from_dict(
-            item={"type": "unknown"}, name="test_name", typehint="TestTypeHint"
-        )
+        get_property(item=item, **MINIMUM_DATA)

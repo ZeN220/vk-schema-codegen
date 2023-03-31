@@ -8,7 +8,6 @@ from .integer import IntegerProperty
 class IntegerEnumProperty(IntegerProperty):
     __typehint__: str
 
-    type: str
     enum: list[int]
     enumNames: list[str]
 

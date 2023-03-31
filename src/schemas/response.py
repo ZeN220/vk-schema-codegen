@@ -1,9 +1,4 @@
-from src.properties import (
-    BaseProperty,
-    ReferenceProperty,
-    get_enum_property_from_dict,
-    get_property_from_dict,
-)
+from src.properties import BaseProperty, ReferenceProperty, get_property
 from src.strings import to_camel_case
 
 from .base import BaseSchema
@@ -19,12 +14,7 @@ class ResponseSchema(BaseSchema):
             response_model = to_camel_case(name) + "Model"
             response_field = ReferenceProperty(name="response", reference=response_model)
         else:
-            if response.get("enum") is not None:
-                response_field = get_enum_property_from_dict(
-                    item=response, name="response", typehint=name + "Model"
-                )
-            else:
-                response_field = get_property_from_dict(item=response, name="response")
+            response_field = get_property(item=response, name="response", typehint=name + "Model")
         return cls(name=name, response=response_field)
 
     def to_class(self) -> str:

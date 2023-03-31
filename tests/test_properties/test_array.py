@@ -28,7 +28,21 @@ class TestArrayProperty:
                     ),
                 },
                 "    test_name: typing.Optional[list[dict]] = None\n"
-                '    """\n    Description of item of array: Item description\n    """\n',
+                '    """\n    Description array item: Item description\n    """\n',
+            ),
+            (
+                {
+                    **MINIMUM_DATA,
+                    "items": ArrayProperty(
+                        name="test_name",
+                        type="array",
+                        items=DictProperty(
+                            name="test_name", type="dict", description="Item description"
+                        ),
+                    ),
+                },
+                "    test_name: typing.Optional[list[list[dict]]] = None\n"
+                '    """\n    Description array item: Item description\n    """\n',
             ),
         ],
     )

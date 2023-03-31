@@ -5,7 +5,8 @@ from typing import Optional
 
 from msgspec import Struct
 
-from src.strings import get_reference, to_python_type
+from src.references import get_reference
+from src.strings import to_python_type
 
 from .base import BaseSchema
 

@@ -3,11 +3,11 @@ from .base import BaseProperty
 from .boolean import BooleanProperty
 from .dict import DictProperty
 from .float import FloatProperty
+from .from_dict import get_property
 from .integer import IntegerProperty
 from .integer_enum import IntegerEnumProperty
 from .one_of import OneOfProperty
 from .pattern import PatternProperty
-from .properties import get_enum_property_from_dict, get_property_from_dict
 from .reference import ReferenceProperty
 from .string import StringProperty
 from .string_enum import StringEnumProperty
@@ -27,6 +27,5 @@ __all__ = [
     "PatternProperty",
     "StringEnumProperty",
     "IntegerEnumProperty",
-    "get_property_from_dict",
-    "get_enum_property_from_dict",
+    "get_property",
 ]
