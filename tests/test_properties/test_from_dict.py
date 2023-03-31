@@ -118,6 +118,7 @@ def test_get_property(arguments: dict, expected: BaseProperty):
     assert get_property(**arguments) == expected
 
 
-def test_get_property_unknown():
+@pytest.mark.parametrize("item", [{"type": "unknown"}, {"type": "unknown", "enum": ["a"]}])
+def test_get_property_unknown(item):
     with pytest.raises(ValueError):
-        get_property(item={"type": "unknown"}, **MINIMUM_DATA)
+        get_property(item=item, **MINIMUM_DATA)
