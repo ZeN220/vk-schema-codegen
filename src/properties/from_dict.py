@@ -15,14 +15,19 @@ from .string_enum import StringEnumProperty
 from .union import UnionProperty
 
 
-def get_property_from_dict(item: dict, name: str) -> BaseProperty:
+def get_property(item: dict, name: str, typehint: str) -> BaseProperty:
     """
     Some properties have a nested properties, which are not defined names.
     So, this nested properties have a name of parent property.
     :param item: property as dict
     :param name: name of property
+    :param typehint: typehint which will be used if the property turns out to be enum.
+    its very wrong solution and should be redone
     :return: property as BaseProperty class
     """
+    if item.get("enum") is not None:
+        enum = _get_enum_property(item, name, typehint)
+        return enum
     if item.get("$ref") is not None:
         copy_item = item.copy()
         ref = copy_item.pop("$ref")
@@ -31,13 +36,13 @@ def get_property_from_dict(item: dict, name: str) -> BaseProperty:
     if item.get("oneOf") is not None:
         copy_item = item.copy()
         one_of_elements = copy_item.pop("oneOf")
-        one_of = [get_property_from_dict(item, name) for item in one_of_elements]
+        one_of = [get_property(item, name, typehint) for item in one_of_elements]
         return OneOfProperty(name=name, oneOf=one_of, **copy_item)
     if item.get("patternProperties") is not None:
         copy_item = item.copy()
         pattern_properties = copy_item.pop("patternProperties")
         pattern_properties = {
-            key: get_property_from_dict(value, name) for key, value in pattern_properties.items()
+            key: get_property(value, name, typehint) for key, value in pattern_properties.items()
         }
         return PatternProperty(name=name, patternProperties=pattern_properties, **copy_item)
 
@@ -47,7 +52,7 @@ def get_property_from_dict(item: dict, name: str) -> BaseProperty:
     if property_type == "array":
         copy_item = item.copy()
         array_items = copy_item.pop("items")
-        items = get_property_from_dict(array_items, name)
+        items = get_property(array_items, name, typehint)
         return ArrayProperty(name=name, items=items, **copy_item)
     if property_type == "object":
         return DictProperty(name=name, **item)
@@ -66,7 +71,7 @@ def get_property_from_dict(item: dict, name: str) -> BaseProperty:
     raise ValueError(f"Unknown property type: {property_type}")
 
 
-def get_enum_property_from_dict(item: dict, name: str, typehint: str) -> BaseProperty:
+def _get_enum_property(item: dict, name: str, typehint: str) -> BaseProperty:
     property_type = item["type"]
     if property_type == "string":
         return StringEnumProperty(name=name, __typehint__=typehint, **item)

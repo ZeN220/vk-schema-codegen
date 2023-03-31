@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from src.properties import BaseProperty, get_property_from_dict
+from src.properties import BaseProperty, get_property
 
 from .base import BaseSchema
 
@@ -19,7 +19,8 @@ class ArraySchema(BaseSchema):
     def from_dict(cls, name: str, data: dict) -> ArraySchema:
         # Because we need edit value of items, we need to copy it
         copy_data = data.copy()
-        copy_data["items"] = get_property_from_dict(copy_data["items"], name)
+        typehint = name + "Enum"
+        copy_data["items"] = get_property(copy_data["items"], name, typehint)
         schema = cls(name=name, **copy_data)
         return schema
 
