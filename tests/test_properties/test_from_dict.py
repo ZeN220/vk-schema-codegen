@@ -114,10 +114,10 @@ MINIMUM_DATA: dict = {"name": "test_name", "typehint": "test_typehint"}
         ),
     ],
 )
-def test_get_property_from_dict(arguments: dict, expected: BaseProperty):
+def test_get_property(arguments: dict, expected: BaseProperty):
     assert get_property(**arguments) == expected
 
 
-def test_get_property_from_dict_unknown():
+def test_get_property_unknown():
     with pytest.raises(ValueError):
         get_property(item={"type": "unknown"}, **MINIMUM_DATA)
